@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>金鱼常见病查询系统 - 手机版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 基础重置与全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #e74c3c;
+            --success: #2ecc71;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #777777;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 容器样式 - 确保在手机上显示良好 */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* 头部样式 */
+        header {
+            text-align: center;
+            padding: 20px 0;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+        }
+        
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        /* 搜索区域 - 手机优化 */
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        
+        .search-container {
+            display: flex;
+            flex-direction: column; /* 手机改为垂直布局 */
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .search-box {
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .search-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 14px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .search-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        /* 分类标签 - 适合手机屏幕 */
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            padding-top: 10px;
+        }
+        
+        .filter-tag {
+            background: #e3f2fd;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .filter-tag:hover, .filter-tag.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* 主要内容区域 - 单列布局 */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* 疾病列表 - 可滚动 */
+        .diseases-list {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .diseases-list h2 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            color: var(--secondary);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .disease-item {
+            padding: 14px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--light-bg);
+        }
+        
+        .disease-item:hover {
+            background: #e3f2ff;
+            transform: translateX(3px);
+        }
+        
+        .disease-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .disease-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #d1e7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        
+        .disease-item.active .disease-icon {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .disease-name {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        /* 疾病信息区域 - 手机优化 */
+        .disease-info {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        
+        .disease-header {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .disease-title {
+            font-size: 1.6rem;
+            color: var(--secondary);
+        }
+        
+        .disease-severity {
+            background: var(--accent);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            align-self: flex-start;
+        }
+        
+        .disease-content p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        .disease-content h3 {
+            color: var(--primary);
+            margin: 22px 0 14px;
+            padding-left: 10px;
+            border-left: 4px solid var(--primary);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 症状网格 - 单列布局 */
+        .symptoms-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .symptom-card {
+            background: #f0f7ff;
+            padding: 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+        
+        /* 治疗步骤 */
+        .treatment-steps {
+            counter-reset: step-counter;
+        }
+        
+        .step {
+            margin-bottom: 16px;
+            padding-left: 42px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        .step:before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        
+        /* 药物列表 */
+        .medication-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        
+        .medication-card {
+            background: #e3f2ff;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        .medication-name {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+        }
+        
+        /* 预防措施网格 */
+        .prevention-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .prevention-card {
+            background: #f0faf7;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        .prevention-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .prevention-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--secondary);
+            text-align: center;
+        }
+        
+        .prevention-card p {
+            text-align: center;
+            font-size: 0.92rem;
+            color: var(--text-light);
+        }
+        
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            color: white;
+            padding: 25px 0 15px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        /* 手机横屏优化 */
+        @media (min-width: 480px) {
+            .prevention-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .symptoms-grid {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .symptom-card {
+                flex: 1 1 45%;
+            }
+        }
+        
+        /* 平板优化 */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+            
+            .content {
+                flex-direction: row;
+            }
+            
+            .diseases-list {
+                flex: 0 0 280px;
+                max-height: 600px;
+            }
+            
+            .disease-info {
+                flex: 1;
+            }
+            
+            .prevention-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #b8c2cc;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-fish"></i> 金鱼常见病查询系统</h1>
+            <p>专业金鱼疾病诊断与治疗方案，手机随时随地查询</p>
+        </header>
+        
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="输入疾病名称或症状...">
+                <button class="search-btn"><i class="fas fa-search"></i> 搜索疾病</button>
+            </div>
+            <div class="filter-tags">
+                <div class="filter-tag active">全部</div>
+                <div class="filter-tag">真菌类</div>
+                <div class="filter-tag">细菌类</div>
+                <div class="filter-tag">寄生虫</div>
+                <div class="filter-tag">环境类</div>
+            </div>
+        </section>
+        
+        <div class="content">
+            <div class="diseases-list">
+                <h2><i class="fas fa-disease"></i> 常见疾病</h2>
+                <div class="disease-item active">
+                    <div class="disease-icon"><i class="fas fa-bacteria"></i></div>
+                    <div class="disease-name">白霉病</div>
+                </div>
+                <div class="disease-item">
+                    <div class="disease-icon"><i class="fas fa-virus"></i></div>
+                    <div class="disease-name">烂尾病</div>
+                </div>
+                <div class="disease-item">
+                    <div class="disease-icon"><i class="fas fa-bug"></i></div>
+                    <div class="disease-name">白点病</div>
+                </div>
+                <div class="disease-item">
+                    <div class="disease-icon"><i class="fas fa-tint"></i></div>
+                    <div class="disease-name">立鳞病</div>
+                </div>
+                <div class="disease-item">
+                    <div class="disease-icon"><i class="fas fa-skull"></i></div>
+                    <div class="disease-name">鱼鳔病</div>
+                </div>
+                <div class="disease-item">
+                    <div class="disease-icon"><i class="fas fa-eye"></i></div>
+                    <div class="disease-name">蒙眼病</div>
+                </div>
+                <div class="disease-item">
+                    <div class="disease-icon"><i class="fas fa-water"></i></div>
+                    <div class="disease-name">锚头蚤病</div>
+                </div>
+                <div class="disease-item">
+                    <div class="disease-icon"><i class="fas fa-allergies"></i></div>
+                    <div class="disease-name">鱼虱病</div>
+                </div>
+            </div>
+            
+            <div class="disease-info">
+                <div class="disease-header">
+                    <h2 class="disease-title">白霉病（水霉病）</h2>
+                    <span class="disease-severity">高传染性</span>
+                </div>
+                
+                <div class="disease-content">
+                    <p>白霉病又称水霉病，是由水霉菌寄生在鱼体伤口引起的真菌性疾病。多发于水温较低的季节（15-20℃），尤其在金鱼受伤或水质不良时易感染。</p>
+                    
+                    <h3><i class="fas fa-diagnoses"></i> 主要症状</h3>
+                    <div class="symptoms-grid">
+                        <div class="symptom-card">
+                            <i class="fas fa-check-circle" style="color: #ff6b6b;"></i>
+                            <span>体表出现棉絮状白色菌丝</span>
+                        </div>
+                        <div class="symptom-card">
+                            <i class="fas fa-check-circle" style="color: #ff6b6b;"></i>
+                            <span>病鱼游动缓慢，食欲减退</span>
+                        </div>
+                        <div class="symptom-card">
+                            <i class="fas fa-check-circle" style="color: #ff6b6b;"></i>
+                            <span>体表出现红色溃疡伤口</span>
+                        </div>
+                        <div class="symptom-card">
+                            <i class="fas fa-check-circle" style="color: #ff6b6b;"></i>
+                            <span>鱼鳍出现破损或腐烂</span>
+                        </div>
+                    </div>
+                    
+                    <h3><i class="fas fa-clinic-medical"></i> 治疗方法</h3>
+                    <div class="treatment-steps">
+                        <div class="step">
+                            <strong>隔离病鱼：</strong> 立即将患病金鱼移至单独治疗缸，防止疾病传播。
+                        </div>
+                        <div class="step">
+                            <strong>盐浴疗法：</strong> 使用2-3%浓度的盐水（每升水加20-30克食盐）浸泡病鱼5-10分钟，每天1次，连续3天。
+                        </div>
+                        <div class="step">
+                            <strong>升温抑菌：</strong> 将水温缓慢升至26-28℃（每天升温不超过2℃），高温可抑制水霉菌繁殖。
+                        </div>
+                        <div class="step">
+                            <strong>药物治疗：</strong> 对中重度感染，使用以下药物之一进行治疗：
+                            <div class="medication-list">
+                                <div class="medication-card">
+                                    <div class="medication-name"><i class="fas fa-pills"></i> 孔雀石绿</div>
+                                    <div>浓度：1-2ppm (每100升水加0.1-0.2克)</div>
+                                    <div>用法：浸洗20-30分钟，每日1次，连用3天</div>
+                                </div>
+                                <div class="medication-card">
+                                    <div class="medication-name"><i class="fas fa-prescription-bottle"></i> 高锰酸钾+盐</div>
+                                    <div>浓度：2ppm高锰酸钾 + 1%盐水</div>
+                                    <div>用法：混合浸泡20-30分钟</div>
+                                </div>
+                                <div class="medication-card">
+                                    <div class="medication-name"><i class="fas fa-vial"></i> 黄粉（呋喃西林）</div>
+                                    <div>浓度：5ppm (每100升水加0.5克)</div>
+                                    <div>用法：浸洗，每日1次</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3><i class="fas fa-shield-alt"></i> 预防措施</h3>
+                    <div class="prevention-grid">
+                        <div class="prevention-card">
+                            <div class="prevention-icon"><i class="fas fa-hand-paper"></i></div>
+                            <h4>避免鱼体受伤</h4>
+                            <p>捕捞时使用软网，移除缸内尖锐装饰物</p>
+                        </div>
+                        <div class="prevention-card">
+                            <div class="prevention-icon"><i class="fas fa-tint"></i></div>
+                            <h4>维持水质稳定</h4>
+                            <p>保持pH 7.0-8.0，定期检测水质</p>
+                        </div>
+                        <div class="prevention-card">
+                            <div class="prevention-icon"><i class="fas fa-thermometer-half"></i></div>
+                            <h4>温度管理</h4>
+                            <p>冬季保持水温≥18℃，避免温度骤变</p>
+                        </div>
+                        <div class="prevention-card">
+                            <div class="prevention-icon"><i class="fas fa-vial"></i></div>
+                            <h4>定期盐水浴</h4>
+                            <p>每月用0.5%盐水全缸泼洒1次</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 金鱼健康助手 | 专业水族疾病防治 | 严重病例请咨询专业兽医</p>
+        </footer>
+        
+        <div class="back-to-top" id="backToTop">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // ========== 模拟疾病数据 ==========
+            const diseases = {
+                "白霉病（水霉病）": {
+                    severity: "高传染性",
+                    description: "白霉病又称水霉病，是由水霉菌寄生在鱼体伤口引起的真菌性疾病。多发于水温较低的季节（15-20℃），尤其在金鱼受伤或水质不良时易感染。",
+                    symptoms: [
+                        "体表出现棉絮状白色菌丝",
+                        "病鱼游动缓慢，食欲减退",
+                        "体表出现红色溃疡伤口",
+                        "鱼鳍出现破损或腐烂"
+                    ],
+                    treatments: [
+                        "隔离病鱼：立即将患病金鱼移至单独治疗缸，防止疾病传播。",
+                        "盐浴疗法：使用2-3%浓度的盐水（每升水加20-30克食盐）浸泡病鱼5-10分钟，每天1次，连续3天。",
+                        "升温抑菌：将水温缓慢升至26-28℃（每天升温不超过2℃），高温可抑制水霉菌繁殖。",
+                        "药物治疗：对中重度感染，使用孔雀石绿、高锰酸钾+盐或黄粉进行治疗"
+                    ],
+                    medications: [
+                        {name: "孔雀石绿", dosage: "1-2ppm (每100升水加0.1-0.2克)", usage: "浸洗20-30分钟，每日1次，连用3天"},
+                        {name: "高锰酸钾+盐", dosage: "2ppm高锰酸钾 + 1%盐水", usage: "混合浸泡20-30分钟"},
+                        {name: "黄粉（呋喃西林）", dosage: "5ppm (每100升水加0.5克)", usage: "浸洗，每日1次"}
+                    ],
+                    preventions: [
+                        {title: "避免鱼体受伤", description: "捕捞时使用软网，移除缸内尖锐装饰物"},
+                        {title: "维持水质稳定", description: "保持pH 7.0-8.0，定期检测水质"},
+                        {title: "温度管理", description: "冬季保持水温≥18℃，避免温度骤变"},
+                        {title: "定期盐水浴", description: "每月用0.5%盐水全缸泼洒1次"}
+                    ]
+                },
+                "白点病": {
+                    severity: "中传染性",
+                    description: "白点病又称小瓜虫病，是由寄生虫引起的常见鱼病。病鱼体表会出现白色小点，严重时全身布满白点。",
+                    symptoms: [
+                        "体表出现0.5-1mm白色小点",
+                        "病鱼摩擦缸壁或装饰物",
+                        "食欲减退，呼吸急促",
+                        "鱼鳍闭合，游动异常"
+                    ],
+                    treatments: [
+                        "升温治疗：将水温升至30℃并保持48小时",
+                        "盐浴疗法：0.5%盐水浸泡",
+                        "药物治疗：使用白点净或亚甲基蓝"
+                    ],
+                    medications: [
+                        {name: "白点净", dosage: "按说明书使用", usage: "全缸泼洒"},
+                        {name: "亚甲基蓝", dosage: "2ppm浓度", usage: "药浴30分钟"}
+                    ],
+                    preventions: [
+                        {title: "新鱼检疫", description: "新鱼入缸前隔离观察一周"},
+                        {title: "保持水温稳定", description: "避免温度剧烈变化"},
+                        {title: "增强鱼体免疫力", description: "提供营养均衡的饲料"}
+                    ]
+                }
+            };
+
+            // ========== 疾病列表点击事件 ==========
+            document.querySelectorAll('.disease-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有active类
+                    document.querySelectorAll('.disease-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    
+                    // 为当前项添加active类
+                    this.classList.add('active');
+                    
+                    // 获取疾病名称
+                    const diseaseName = this.querySelector('.disease-name').textContent;
+                    
+                    // 更新疾病信息区域
+                    if(diseases[diseaseName]) {
+                        const disease = diseases[diseaseName];
+                        document.querySelector('.disease-title').textContent = diseaseName;
+                        document.querySelector('.disease-severity').textContent = disease.severity;
+                        document.querySelector('.disease-content p').textContent = disease.description;
+                        
+                        // 更新症状
+                        const symptomsGrid = document.querySelector('.symptoms-grid');
+                        symptomsGrid.innerHTML = '';
+                        disease.symptoms.forEach(symptom => {
+                            symptomsGrid.innerHTML += `
+                                <div class="symptom-card">
+                                    <i class="fas fa-check-circle" style="color: #ff6b6b;"></i>
+                                    <span>${symptom}</span>
+                                </div>
+                            `;
+                        });
+                        
+                        // 更新治疗方法
+                        const treatmentSteps = document.querySelector('.treatment-steps');
+                        treatmentSteps.innerHTML = '';
+                        disease.treatments.forEach((step, index) => {
+                            treatmentSteps.innerHTML += `
+                                <div class="step">
+                                    <strong>${step.split(':')[0]}:</strong> ${step.split(':').slice(1).join(':')}
+                                </div>
+                            `;
+                        });
+                        
+                        // 添加药物信息
+                        if (disease.medications) {
+                            const medList = document.createElement('div');
+                            medList.className = 'medication-list';
+                            disease.medications.forEach(med => {
+                                medList.innerHTML += `
+                                    <div class="medication-card">
+                                        <div class="medication-name"><i class="fas fa-pills"></i> ${med.name}</div>
+                                        <div>用量：${med.dosage}</div>
+                                        <div>用法：${med.usage}</div>
+                                    </div>
+                                `;
+                            });
+                            treatmentSteps.lastElementChild.appendChild(medList);
+                        }
+                        
+                        // 更新预防措施
+                        const preventionGrid = document.querySelector('.prevention-grid');
+                        preventionGrid.innerHTML = '';
+                        disease.preventions.forEach((prev, index) => {
+                            const icons = ['fa-hand-paper', 'fa-tint', 'fa-thermometer-half', 'fa-vial'];
+                            preventionGrid.innerHTML += `
+                                <div class="prevention-card">
+                                    <div class="prevention-icon"><i class="fas ${icons[index]}"></i></div>
+                                    <h4>${prev.title}</h4>
+                                    <p>${prev.description}</p>
+                                </div>
+                            `;
+                        });
+                        
+                        // 滚动到疾病信息区域顶部
+                        document.querySelector('.disease-info').scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // ========== 搜索功能 ==========
+            document.querySelector('.search-btn').addEventListener('click', function() {
+                const searchTerm = document.querySelector('.search-box').value.toLowerCase();
+                if (searchTerm) {
+                    // 简单搜索逻辑 - 在实际应用中应更复杂
+                    let found = false;
+                    
+                    // 在疾病列表中查找匹配项
+                    document.querySelectorAll('.disease-name').forEach(nameElement => {
+                        const diseaseName = nameElement.textContent.toLowerCase();
+                        if (diseaseName.includes(searchTerm)) {
+                            // 模拟点击该疾病项
+                            nameElement.closest('.disease-item').click();
+                            found = true;
+                        }
+                    });
+                    
+                    if (!found) {
+                        // 显示未找到提示
+                        alert(`未找到包含"${searchTerm}"的疾病，请尝试其他关键词。`);
+                    }
+                }
+            });
+
+            // ========== 标签过滤 ==========
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-tag').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    const filter = this.textContent;
+                    // 简单的过滤逻辑
+                    document.querySelectorAll('.disease-item').forEach(item => {
+                        if (filter === "全部") {
+                            item.style.display = "flex";
+                        } else {
+                            // 在实际应用中应根据疾病类型进行过滤
+                            item.style.display = "flex";
+                        }
+                    });
+                });
+            });
+            
+            // ========== 返回顶部功能 ==========
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // ========== 输入框回车键搜索 ==========
+            document.querySelector('.search-box').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.querySelector('.search-btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
