@@ -35,6 +35,8 @@
             margin-bottom: 20px;
             color: white;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            animation: fadeInDown 0.8s ease;
         }
         
         header h1 {
@@ -53,6 +55,15 @@
             margin: 0 auto;
         }
         
+        .fish-decoration {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            font-size: 2.5rem;
+            opacity: 0.3;
+            animation: swim 8s infinite linear;
+        }
+        
         .search-box {
             background: white;
             border-radius: 20px;
@@ -60,6 +71,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             margin-bottom: 25px;
             position: relative;
+            animation: fadeInUp 0.8s ease;
         }
         
         .search-box h2 {
@@ -95,6 +107,7 @@
             background-color: #f8f9fa;
             appearance: none;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         select:focus {
@@ -136,6 +149,7 @@
             justify-content: center;
             font-size: 1.8rem;
             color: white;
+            flex-shrink: 0;
         }
         
         .disease-title {
@@ -162,21 +176,26 @@
             font-size: 1.05rem;
         }
         
-        .symptoms, .treatment {
+        .symptoms, .treatment, .prevention {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 12px;
             margin-top: 10px;
         }
         
-        .symptoms ul, .treatment ul {
+        .symptoms ul, .treatment ul, .prevention ul {
             padding-left: 20px;
             margin-top: 10px;
         }
         
-        .symptoms li, .treatment li {
+        .symptoms li, .treatment li, .prevention li {
             margin-bottom: 8px;
             line-height: 1.5;
+        }
+        
+        .prevention {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
         }
         
         footer {
@@ -195,6 +214,7 @@
             margin-top: 15px;
             color: white;
             font-size: 0.95rem;
+            animation: pulse 2s infinite;
         }
         
         .tip strong {
@@ -203,9 +223,46 @@
             font-size: 1.1rem;
         }
         
+        .disease-image {
+            width: 100%;
+            border-radius: 12px;
+            margin: 15px 0;
+            height: 180px;
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes swim {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
         }
         
         @media (max-width: 480px) {
@@ -222,12 +279,28 @@
                 height: 60px;
                 font-size: 1.5rem;
             }
+            
+            .search-box {
+                padding: 20px;
+            }
+            
+            .disease-info {
+                padding: 20px;
+            }
+            
+            .disease-image {
+                height: 150px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
+            <div class="fish-decoration">
+                <i class="fas fa-fish"></i>
+            </div>
             <h1><i class="fas fa-fish"></i> 金鱼常见病查询手册</h1>
             <p>下拉选择疾病类型，快速获取防治信息</p>
         </header>
@@ -249,8 +322,8 @@
             </div>
             
             <div class="tip">
-                <strong>小贴士</strong>
-                保持水质清洁是预防金鱼疾病的关键！定期换水，避免过度喂食。
+                <strong><i class="fas fa-lightbulb"></i> 预防小贴士</strong>
+                保持水质清洁是预防金鱼疾病的关键！定期换水（每周更换25%），避免过度喂食，维持稳定水温。
             </div>
         </div>
         
@@ -262,9 +335,13 @@
                 <h2 class="disease-title">白点病</h2>
             </div>
             
+            <div class="disease-image">
+                白点病症状示意图：金鱼体表布满白色小点
+            </div>
+            
             <div class="info-section">
                 <h3><i class="fas fa-info-circle"></i> 疾病简介</h3>
-                <p>白点病是金鱼最常见的寄生虫病，由纤毛虫纲的白点虫引起。水温变化大时易发。</p>
+                <p>白点病是金鱼最常见的寄生虫病，由纤毛虫纲的白点虫引起。水温变化大时易发，传染性极强。</p>
             </div>
             
             <div class="info-section">
@@ -275,6 +352,7 @@
                         <li>鱼频繁摩擦缸壁或装饰物</li>
                         <li>食欲减退，活动力下降</li>
                         <li>鱼鳍收拢，呼吸急促</li>
+                        <li>严重时白点覆盖全身</li>
                     </ul>
                 </div>
             </div>
@@ -291,6 +369,18 @@
                     </ul>
                 </div>
             </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-shield-alt"></i> 预防措施</h3>
+                <div class="prevention">
+                    <ul>
+                        <li>新鱼入缸前隔离观察1-2周</li>
+                        <li>避免水温剧烈变化</li>
+                        <li>保持水质清洁，定期换水</li>
+                        <li>避免过度密集饲养</li>
+                    </ul>
+                </div>
+            </div>
         </div>
         
         <div class="disease-info" id="fin-rot-info">
@@ -301,9 +391,13 @@
                 <h2 class="disease-title">烂尾病/烂鳍病</h2>
             </div>
             
+            <div class="disease-image">
+                烂尾病症状示意图：金鱼尾鳍溃烂断裂
+            </div>
+            
             <div class="info-section">
                 <h3><i class="fas fa-info-circle"></i> 疾病简介</h3>
-                <p>由细菌感染引起的疾病，水质恶化或鱼体受伤后易发生。常见于尾鳍、背鳍。</p>
+                <p>由细菌感染引起的疾病，水质恶化或鱼体受伤后易发生。常见于尾鳍、背鳍，如不及时治疗会导致死亡。</p>
             </div>
             
             <div class="info-section">
@@ -314,6 +408,7 @@
                         <li>鳍条断裂、溶解</li>
                         <li>严重时溃烂蔓延至身体</li>
                         <li>鱼体失去平衡，游动困难</li>
+                        <li>患处可能覆盖白色菌丝</li>
                     </ul>
                 </div>
             </div>
@@ -327,6 +422,19 @@
                         <li>加0.5%盐辅助治疗</li>
                         <li>严重时隔离治疗，避免感染</li>
                         <li>保持水温稳定在24-26℃</li>
+                        <li>每天药浴15-20分钟</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-shield-alt"></i> 预防措施</h3>
+                <div class="prevention">
+                    <ul>
+                        <li>避免鱼缸中有尖锐装饰物</li>
+                        <li>防止金鱼之间互相攻击</li>
+                        <li>保持水质良好，氨氮含量低</li>
+                        <li>定期清洗过滤系统</li>
                     </ul>
                 </div>
             </div>
@@ -340,9 +448,13 @@
                 <h2 class="disease-title">腹水病/立鳞病</h2>
             </div>
             
+            <div class="disease-image">
+                立鳞病症状示意图：金鱼鳞片竖起呈松果状
+            </div>
+            
             <div class="info-section">
                 <h3><i class="fas fa-info-circle"></i> 疾病简介</h3>
-                <p>又称松果病，由细菌感染引起的内脏疾病。晚期治愈率低，需早发现早治疗。</p>
+                <p>又称松果病，由细菌感染引起的内脏疾病。晚期治愈率低，需早发现早治疗。常与水质恶化有关。</p>
             </div>
             
             <div class="info-section">
@@ -354,6 +466,7 @@
                         <li>眼睛突出（突眼）</li>
                         <li>肛门红肿，排泄物异常</li>
                         <li>鱼体失去平衡，沉底不动</li>
+                        <li>鳃盖可能张开</li>
                     </ul>
                 </div>
             </div>
@@ -371,6 +484,18 @@
                     </ul>
                 </div>
             </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-shield-alt"></i> 预防措施</h3>
+                <div class="prevention">
+                    <ul>
+                        <li>避免过度喂食，特别是高蛋白饲料</li>
+                        <li>保持水质稳定，避免氨氮超标</li>
+                        <li>新鱼入缸前严格检疫</li>
+                        <li>定期检测水质参数</li>
+                    </ul>
+                </div>
+            </div>
         </div>
         
         <div class="disease-info" id="ich-info">
@@ -381,9 +506,13 @@
                 <h2 class="disease-title">鱼虱病</h2>
             </div>
             
+            <div class="disease-image">
+                鱼虱病症状示意图：金鱼体表可见寄生虫
+            </div>
+            
             <div class="info-section">
                 <h3><i class="fas fa-info-circle"></i> 疾病简介</h3>
-                <p>由甲壳类寄生虫鱼虱引起的疾病，虫体可见，常附着在鱼体表面吸血。</p>
+                <p>由甲壳类寄生虫鱼虱引起的疾病，虫体可见，常附着在鱼体表面吸血。多因引入新鱼或水草带入。</p>
             </div>
             
             <div class="info-section">
@@ -394,6 +523,7 @@
                         <li>鱼频繁跳跃、摩擦缸壁</li>
                         <li>被叮咬处红肿发炎</li>
                         <li>鱼体消瘦，活力下降</li>
+                        <li>可能出现继发性感染</li>
                     </ul>
                 </div>
             </div>
@@ -407,6 +537,190 @@
                         <li>全缸杀虫，避免复发</li>
                         <li>处理伤口，防止细菌感染</li>
                         <li>加强换水，保持水质</li>
+                        <li>隔离治疗2-3周</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-shield-alt"></i> 预防措施</h3>
+                <div class="prevention">
+                    <ul>
+                        <li>新鱼入缸前严格检疫</li>
+                        <li>水草入缸前消毒处理</li>
+                        <li>避免使用野外采集的活饵</li>
+                        <li>定期观察鱼体表面</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="disease-info" id="velvet-info">
+            <div class="disease-header">
+                <div class="disease-icon">
+                    <i class="fas fa-feather"></i>
+                </div>
+                <h2 class="disease-title">丝绒病</h2>
+            </div>
+            
+            <div class="disease-image">
+                丝绒病症状示意图：金鱼体表呈黄色绒状
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-info-circle"></i> 疾病简介</h3>
+                <p>由卵圆鞭毛虫引起的寄生虫病，传染性强，常见于水质不良的环境。因其症状似金色绒布而得名。</p>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-exclamation-triangle"></i> 症状表现</h3>
+                <div class="symptoms">
+                    <ul>
+                        <li>鱼体表面出现金黄色或淡黄色绒状斑点</li>
+                        <li>鱼体摩擦硬物</li>
+                        <li>鱼鳍收拢，呼吸急促</li>
+                        <li>严重时体表出现溃疡</li>
+                        <li>在暗处用手电筒照射可见金色粉末状</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-medkit"></i> 治疗方法</h3>
+                <div class="treatment">
+                    <ul>
+                        <li>使用硫酸铜或专用药物治疗</li>
+                        <li>保持水温28℃以上</li>
+                        <li>加盐0.3%辅助治疗</li>
+                        <li>避光治疗（卵圆鞭毛虫需要光照繁殖）</li>
+                        <li>加强换水，改善水质</li>
+                        <li>治疗周期10-14天</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-shield-alt"></i> 预防措施</h3>
+                <div class="prevention">
+                    <ul>
+                        <li>保持水质清洁，避免有机废物堆积</li>
+                        <li>新鱼入缸前隔离观察</li>
+                        <li>避免温度剧烈波动</li>
+                        <li>定期清洗过滤系统</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="disease-info" id="swim-bladder-info">
+            <div class="disease-header">
+                <div class="disease-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <h2 class="disease-title">鱼鳔病</h2>
+            </div>
+            
+            <div class="disease-image">
+                鱼鳔病症状示意图：金鱼失去平衡侧翻
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-info-circle"></i> 疾病简介</h3>
+                <p>鱼鳔功能失调导致，常见于体型特殊的金鱼（如琉金、兰寿），可能由喂食不当、水温骤变引起。</p>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-exclamation-triangle"></i> 症状表现</h3>
+                <div class="symptoms">
+                    <ul>
+                        <li>鱼体失去平衡，侧翻或倒立</li>
+                        <li>游动困难，时而上浮时而下沉</li>
+                        <li>食欲正常但无法正常游动进食</li>
+                        <li>腹部可能肿胀</li>
+                        <li>静止时无法保持正常姿态</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-medkit"></i> 治疗方法</h3>
+                <div class="treatment">
+                    <ul>
+                        <li>停食2-3天，然后喂食煮熟的去皮绿豆</li>
+                        <li>降低水位，减少鱼游动负担</li>
+                        <li>保持水温恒定（24-26℃）</li>
+                        <li>避免喂食上浮性饲料</li>
+                        <li>严重时可尝试抗生素治疗（防止继发感染）</li>
+                        <li>提供浅水环境让鱼休息</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-shield-alt"></i> 预防措施</h3>
+                <div class="prevention">
+                    <ul>
+                        <li>避免过度喂食和喂食后剧烈温度变化</li>
+                        <li>选择易消化的饲料</li>
+                        <li>饲料使用前浸泡软化</li>
+                        <li>保持水温稳定</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="disease-info" id="fungal-info">
+            <div class="disease-header">
+                <div class="disease-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <h2 class="disease-title">水霉病</h2>
+            </div>
+            
+            <div class="disease-image">
+                水霉病症状示意图：金鱼体表覆盖棉絮状菌丝
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-info-circle"></i> 疾病简介</h3>
+                <p>由水霉菌引起，常发生在鱼体受伤后，水温较低时易发。菌丝会深入肌肉组织，需及时治疗。</p>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-exclamation-triangle"></i> 症状表现</h3>
+                <div class="symptoms">
+                    <ul>
+                        <li>体表出现棉絮状菌丝</li>
+                        <li>伤口红肿发炎</li>
+                        <li>游动缓慢，食欲减退</li>
+                        <li>严重时全身覆盖白色絮状物</li>
+                        <li>鱼体消瘦，活力下降</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-medkit"></i> 治疗方法</h3>
+                <div class="treatment">
+                    <ul>
+                        <li>使用亚甲基蓝或孔雀石绿溶液药浴</li>
+                        <li>加温至26℃以上抑制霉菌生长</li>
+                        <li>加0.5%盐辅助治疗</li>
+                        <li>处理伤口，去除菌丝</li>
+                        <li>保持水质清洁，避免鱼体受伤</li>
+                        <li>重症鱼需要隔离治疗</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3><i class="fas fa-shield-alt"></i> 预防措施</h3>
+                <div class="prevention">
+                    <ul>
+                        <li>避免鱼体受伤，移除尖锐物体</li>
+                        <li>保持水温在20℃以上</li>
+                        <li>受伤金鱼及时用消毒剂处理伤口</li>
+                        <li>定期换水，保持水质清洁</li>
                     </ul>
                 </div>
             </div>
@@ -421,9 +735,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             const diseaseSelect = document.getElementById('disease-select');
             const diseaseInfos = document.querySelectorAll('.disease-info');
+            const tip = document.querySelector('.tip');
             
             // 初始显示提示信息
-            document.querySelector('.tip').style.display = 'block';
+            tip.style.display = 'block';
             
             diseaseSelect.addEventListener('change', function() {
                 const selectedValue = this.value;
@@ -434,16 +749,29 @@
                 });
                 
                 // 隐藏提示信息
-                document.querySelector('.tip').style.display = 'none';
+                tip.style.display = 'none';
                 
                 // 显示选中的疾病信息
                 if (selectedValue) {
-                    document.getElementById(selectedValue + '-info').classList.add('active');
+                    const diseaseInfo = document.getElementById(selectedValue + '-info');
+                    diseaseInfo.classList.add('active');
                     
                     // 滚动到疾病信息位置
-                    document.getElementById(selectedValue + '-info').scrollIntoView({
-                        behavior: 'smooth'
+                    diseaseInfo.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
                     });
+                }
+            });
+            
+            // 添加点击事件关闭所有信息面板
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.disease-info') && !e.target.closest('.search-box')) {
+                    diseaseInfos.forEach(info => {
+                        info.classList.remove('active');
+                    });
+                    tip.style.display = 'block';
+                    diseaseSelect.selectedIndex = 0;
                 }
             });
         });
