@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能减脂饮食计划计算器</title>
+    <title>xl减脂饮食计划计算器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #3498db;
+            --primary-dark: #2980b9;
             --secondary: #2ecc71;
-            --accent: #e74c3c;
-            --dark: #2c3e50;
-            --light: #f5f7fa;
-            --text: #333;
-            --text-light: #7f8c8d;
-            --success: #27ae60;
-            --warning: #f39c12;
             --danger: #e74c3c;
-            --border-radius: 15px;
-            --box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            --warning: #f39c12;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             --transition: all 0.3s ease;
+            --food-veg: #27ae60;
+            --food-protein: #e74c3c;
+            --food-carb: #f39c12;
+            --food-dairy: #3498db;
         }
         
         * {
@@ -30,206 +33,171 @@
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            background: linear-gradient(135deg, #f0f5f9 0%, #e4edf5 100%);
             min-height: 100vh;
-            padding: 20px;
-            color: var(--text);
+            padding: 15px;
+            color: var(--dark);
             line-height: 1.6;
-            background-attachment: fixed;
+            font-size: 16px;
         }
         
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         
+        /* 头部样式 */
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 35px 20px;
-            background: linear-gradient(120deg, var(--primary), var(--dark));
+            margin-bottom: 20px;
+            padding: 20px 15px;
+            background: white;
             border-radius: var(--border-radius);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            color: white;
+            box-shadow: var(--box-shadow);
             position: relative;
             overflow: hidden;
         }
         
         header::before {
-            content: "";
+            content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            transform: rotate(30deg);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
         
         h1 {
-            color: white;
-            margin-bottom: 12px;
-            font-size: 2.6rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-            position: relative;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-size: 1.8rem;
         }
         
         .subtitle {
-            color: rgba(255,255,255,0.9);
-            font-size: 1.25rem;
-            max-width: 650px;
-            margin: 0 auto;
-            position: relative;
-            font-weight: 300;
+            color: var(--gray);
+            font-size: 1rem;
         }
         
+        /* 卡片样式 */
         .card {
             background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 20px;
+            margin-bottom: 20px;
             transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
         }
         
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
         }
         
         .card-title {
             display: flex;
             align-items: center;
-            color: var(--dark);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(0,0,0,0.05);
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f3f7;
         }
         
         .card-title i {
-            margin-right: 15px;
-            font-size: 1.8rem;
-            background: var(--primary);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+            margin-right: 10px;
+            font-size: 1.4rem;
         }
         
+        /* 输入组样式 */
         .input-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 25px;
-            margin-bottom: 25px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
         
         .input-item {
             flex: 1;
-            min-width: 220px;
+            min-width: 100%;
         }
         
-        .input-item label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+        @media (min-width: 576px) {
+            .input-item {
+                min-width: calc(50% - 15px);
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
             font-weight: 600;
             color: var(--dark);
-            font-size: 1.1rem;
-        }
-        
-        .input-item label i {
-            margin-right: 10px;
-            color: var(--primary);
-            font-size: 1.2rem;
         }
         
         input, select {
             width: 100%;
-            padding: 16px 20px;
+            padding: 14px;
             border: 1px solid #ddd;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            border-radius: 8px;
+            font-size: 1rem;
             transition: var(--transition);
-            background: #f9fbfd;
+            background-color: #f8f9fa;
         }
         
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+            background-color: white;
         }
         
+        /* 按钮样式 */
         .btn-calculate {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 18px 30px;
-            font-size: 1.25rem;
-            border-radius: 12px;
+            padding: 16px;
+            font-size: 1.1rem;
+            border-radius: 8px;
             cursor: pointer;
             transition: var(--transition);
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: block;
             width: 100%;
-            margin-top: 15px;
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            margin-top: 10px;
             position: relative;
             overflow: hidden;
         }
         
-        .btn-calculate i {
-            margin-right: 12px;
-            font-size: 1.4rem;
-        }
-        
         .btn-calculate:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+            background: var(--primary-dark);
         }
         
         .btn-calculate:active {
-            transform: translateY(1px);
+            transform: translateY(2px);
         }
         
-        .btn-calculate::after {
-            content: "";
+        .btn-calculate.loading::after {
+            content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 80%);
-            transform: rotate(30deg);
-            opacity: 0;
-            transition: opacity 0.5s;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: loadingPulse 1.5s infinite;
         }
         
-        .btn-calculate:hover::after {
-            opacity: 1;
+        @keyframes loadingPulse {
+            0% { opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0; }
         }
         
+        /* 结果区域 */
         .result-section {
             display: none;
-            animation: fadeIn 0.8s ease;
+            animation: fadeIn 0.5s ease;
         }
         
         @keyframes fadeIn {
@@ -237,155 +205,120 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .summary-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .summary-card {
-            flex: 1;
-            min-width: 200px;
-            background: linear-gradient(to bottom right, #f8f9fa, #eef2f6);
-            border-radius: var(--border-radius);
-            padding: 25px 20px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .summary-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-        
-        .summary-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: var(--primary);
-        }
-        
-        .summary-card .value {
-            font-size: 2.4rem;
-            font-weight: 800;
-            margin: 15px 0;
-            color: var(--primary);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .summary-card .label {
-            color: var(--text-light);
-            font-size: 1.05rem;
-            font-weight: 500;
-        }
-        
         .bmi-result {
             text-align: center;
-            padding: 25px;
-            border-radius: var(--border-radius);
-            margin: 25px 0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            background: #f8f9fa;
             font-weight: 600;
-            font-size: 1.3rem;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
-            position: relative;
-            overflow: hidden;
+            font-size: 1.1rem;
         }
         
-        .bmi-result::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.7);
-            z-index: -1;
+        .underweight { color: #3498db; background: rgba(52, 152, 219, 0.1); }
+        .normal { color: #27ae60; background: rgba(39, 174, 96, 0.1); }
+        .overweight { color: #f39c12; background: rgba(243, 156, 18, 0.1); }
+        .obese { color: #e74c3c; background: rgba(231, 76, 60, 0.1); }
+        
+        /* 食物替换区域 */
+        .food-replace {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
         }
         
-        .underweight { color: var(--primary); background: rgba(52, 152, 219, 0.1); }
-        .normal { color: var(--success); background: rgba(39, 174, 96, 0.1); }
-        .overweight { color: var(--warning); background: rgba(243, 156, 18, 0.1); }
-        .obese { color: var(--danger); background: rgba(231, 76, 60, 0.1); }
+        .food-replace-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
         
+        .food-replace-title i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
+        .replace-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .replace-option {
+            flex: 1;
+            min-width: 120px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .replace-option:hover {
+            border-color: var(--primary);
+            background: rgba(52, 152, 219, 0.05);
+        }
+        
+        .replace-option.active {
+            border-color: var(--primary);
+            background: rgba(52, 152, 219, 0.1);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .replace-option i {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        
+        /* 膳食计划 */
         .meal-plan {
             display: flex;
             flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 30px;
+            gap: 15px;
+            margin-top: 15px;
         }
         
         .meal-card {
             flex: 1;
-            min-width: 320px;
-            background: linear-gradient(to bottom, #f8f9fa, #f0f4f8);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.05);
+            min-width: 100%;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
         }
         
-        .meal-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-        }
-        
-        .meal-card::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        @media (min-width: 768px) {
+            .meal-card {
+                min-width: calc(50% - 15px);
+            }
         }
         
         .meal-time {
-            display: flex;
-            align-items: center;
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: 25px;
-            font-size: 1.5rem;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
         }
         
         .meal-time i {
-            margin-right: 15px;
-            font-size: 2rem;
+            margin-right: 8px;
             color: var(--primary);
-            background: rgba(52, 152, 219, 0.1);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .food-item {
             display: flex;
             justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px dashed rgba(0,0,0,0.1);
-            align-items: center;
-            transition: var(--transition);
-        }
-        
-        .food-item:hover {
-            background: rgba(52, 152, 219, 0.03);
-            border-radius: 8px;
-            padding-left: 10px;
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
         }
         
         .food-item:last-child {
@@ -393,294 +326,210 @@
         }
         
         .food-name {
-            display: flex;
-            align-items: center;
             font-weight: 600;
             color: var(--dark);
-            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
         }
         
         .food-name i {
-            margin-right: 15px;
-            color: var(--primary);
-            font-size: 1.6rem;
-            width: 40px;
-            text-align: center;
+            margin-right: 8px;
+            width: 20px;
         }
+        
+        .food-veg i { color: var(--food-veg); }
+        .food-protein i { color: var(--food-protein); }
+        .food-carb i { color: var(--food-carb); }
+        .food-dairy i { color: var(--food-dairy); }
         
         .food-amount {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 1.3rem;
-            background: rgba(52, 152, 219, 0.1);
-            padding: 5px 15px;
-            border-radius: 8px;
-            min-width: 120px;
-            text-align: center;
+            font-weight: 600;
         }
+        
+        .food-veg .food-amount { color: var(--food-veg); }
+        .food-protein .food-amount { color: var(--food-protein); }
+        .food-carb .food-amount { color: var(--food-carb); }
+        .food-dairy .food-amount { color: var(--food-dairy); }
         
         .nutrition-summary {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 2px solid rgba(0,0,0,0.05);
-            font-weight: 700;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px solid #eee;
+            font-weight: 600;
             color: var(--dark);
-            font-size: 1.2rem;
-            text-align: center;
-            background: rgba(52, 152, 219, 0.05);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .nutrition-values {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-        }
-        
-        .nutrition-value {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .nutrition-value .value {
-            font-size: 1.4rem;
-            color: var(--primary);
-            font-weight: 800;
-        }
-        
-        .nutrition-value .label {
             font-size: 0.95rem;
-            color: var(--text-light);
-            font-weight: 500;
         }
         
-        .notes {
-            background: linear-gradient(to bottom, #fff8e1, #fff5e0);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            margin-top: 35px;
-            border-left: 5px solid #f1c40f;
+        /* 图表容器 */
+        .chart-container {
+            margin: 20px 0;
+            height: 250px;
             position: relative;
-            overflow: hidden;
         }
         
-        .notes::before {
-            content: "!";
-            position: absolute;
-            top: -30px;
-            right: 10px;
-            font-size: 8rem;
-            color: rgba(241, 196, 15, 0.1);
-            font-weight: 800;
+        .charts-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .chart-box {
+            flex: 1;
+            min-width: 100%;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-box {
+                min-width: calc(50% - 15px);
+            }
+        }
+        
+        .chart-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        /* 注意事项 */
+        .notes {
+            background: #fff8e1;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
         }
         
         .note-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #e67e22;
             display: flex;
             align-items: center;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #e67e22;
-            font-size: 1.4rem;
         }
         
         .note-title i {
-            margin-right: 15px;
-            font-size: 1.8rem;
-            color: #f39c12;
+            margin-right: 8px;
         }
         
         .notes ul {
-            padding-left: 30px;
+            padding-left: 20px;
         }
         
         .notes li {
-            margin-bottom: 15px;
-            line-height: 1.7;
-            font-size: 1.1rem;
-            position: relative;
-        }
-        
-        .notes li::before {
-            content: "•";
-            color: #f1c40f;
-            font-weight: bold;
-            display: inline-block; 
-            width: 1em;
-            margin-left: -1em;
-            font-size: 1.4rem;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
         }
         
         .tip {
             display: flex;
             align-items: center;
-            margin-top: 30px;
-            padding: 25px;
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            border-radius: var(--border-radius);
-            font-size: 1.1rem;
-            border-left: 5px solid var(--primary);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .tip::before {
-            content: "💡";
-            position: absolute;
-            top: -30px;
-            right: 10px;
-            font-size: 8rem;
-            opacity: 0.1;
+            margin-top: 15px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            font-size: 0.95rem;
         }
         
         .tip i {
-            font-size: 2.5rem;
-            margin-right: 20px;
+            font-size: 1.5rem;
+            margin-right: 10px;
             color: var(--primary);
-            min-width: 60px;
-            text-align: center;
+            min-width: 30px;
         }
         
-        .tip-content {
-            flex: 1;
-        }
-        
-        .tip strong {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-            color: var(--dark);
-        }
-        
-        .progress-container {
-            margin: 25px 0;
-            background: #ecf0f1;
-            border-radius: 12px;
-            height: 25px;
-            overflow: hidden;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            border-radius: 12px;
-            transition: width 1s ease;
-            position: relative;
-        }
-        
-        .progress-bar::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: progressShine 2s infinite;
-        }
-        
-        @keyframes progressShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .progress-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 1rem;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-        
-        .recommendation {
-            background: linear-gradient(to bottom, #e8f5e9, #e0f2e1);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-top: 20px;
-            border-left: 4px solid #4caf50;
-            font-size: 1.05rem;
-            position: relative;
-        }
-        
-        .recommendation::before {
-            content: "i";
-            position: absolute;
-            top: -25px;
-            right: 15px;
-            font-size: 8rem;
-            color: rgba(76, 175, 80, 0.1);
-            font-weight: 800;
-            font-style: italic;
-        }
-        
-        .recommendation strong {
-            color: var(--dark);
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-top: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            .meal-plan, .summary-cards, .input-group {
-                flex-direction: column;
-            }
-            
-            .meal-card {
-                min-width: 100%;
+        /* 手机优化 */
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+                font-size: 15px;
             }
             
             h1 {
-                font-size: 2.2rem;
+                font-size: 1.5rem;
             }
             
             .card {
-                padding: 20px;
+                padding: 15px;
             }
             
-            .input-item {
-                min-width: 100%;
+            .input-group {
+                gap: 10px;
+            }
+            
+            input, select {
+                padding: 12px;
             }
             
             .btn-calculate {
-                padding: 16px;
-                font-size: 1.15rem;
+                padding: 14px;
+                font-size: 1rem;
+            }
+            
+            .meal-card {
+                padding: 15px;
+            }
+            
+            .chart-box {
+                padding: 10px;
             }
         }
         
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            
-            header {
-                padding: 25px 15px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
+        /* 错误消息 */
+        .error-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* 动画 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* 打印按钮 */
+        .print-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto 0;
+            transition: var(--transition);
+        }
+        
+        .print-btn i {
+            margin-right: 8px;
+        }
+        
+        .print-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1><i class="fas fa-apple-alt"></i> 智能减脂饮食计划计算器</h1>
-            <p class="subtitle">根据您的身体数据和目标，科学计算个性化减脂饮食方案</p>
+        <header class="pulse">
+            <h1><i class="fas fa-apple-alt"></i> xl减脂饮食计划计算器</h1>
+            <p class="subtitle">根据您的身体数据定制每日两餐减脂计划</p>
         </header>
         
         <div class="card">
@@ -692,27 +541,17 @@
                 <div class="input-item">
                     <label for="height"><i class="fas fa-ruler-vertical"></i> 身高 (厘米)</label>
                     <input type="number" id="height" value="155" min="100" max="250">
+                    <div class="error-message" id="height-error">请输入有效身高 (100-250cm)</div>
                 </div>
                 <div class="input-item">
                     <label for="weight"><i class="fas fa-weight"></i> 当前体重 (公斤)</label>
                     <input type="number" id="weight" value="60" min="30" max="200">
+                    <div class="error-message" id="weight-error">请输入有效体重 (30-200kg)</div>
                 </div>
                 <div class="input-item">
                     <label for="target"><i class="fas fa-bullseye"></i> 目标体重 (公斤)</label>
                     <input type="number" id="target" value="55" min="30" max="200">
-                </div>
-                <div class="input-item">
-                    <label for="age"><i class="fas fa-birthday-cake"></i> 年龄</label>
-                    <input type="number" id="age" value="30" min="15" max="100">
-                </div>
-            </div>
-            <div class="input-group">
-                <div class="input-item">
-                    <label for="gender"><i class="fas fa-venus-mars"></i> 性别</label>
-                    <select id="gender">
-                        <option value="female">女性</option>
-                        <option value="male">男性</option>
-                    </select>
+                    <div class="error-message" id="target-error">请输入有效目标体重</div>
                 </div>
                 <div class="input-item">
                     <label for="activity"><i class="fas fa-running"></i> 活动水平</label>
@@ -724,324 +563,490 @@
                         <option value="1.9">非常高度活动（体力工作+每天锻炼）</option>
                     </select>
                 </div>
+                <div class="input-item">
+                    <label for="gender"><i class="fas fa-venus-mars"></i> 性别</label>
+                    <select id="gender">
+                        <option value="female" selected>女性</option>
+                        <option value="male">男性</option>
+                    </select>
+                </div>
+                <div class="input-item">
+                    <label for="age"><i class="fas fa-birthday-cake"></i> 年龄</label>
+                    <input type="number" id="age" value="30" min="15" max="100">
+                    <div class="error-message" id="age-error">请输入有效年龄 (15-100岁)</div>
+                </div>
             </div>
             <button id="calculate" class="btn-calculate">
                 <i class="fas fa-calculator"></i> 计算我的饮食计划
             </button>
-            
-            <div class="progress-container" id="progressContainer" style="display: none;">
-                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
-            </div>
-            <div class="progress-labels" id="progressLabels" style="display: none;">
-                <span>当前体重: 60kg</span>
-                <span>目标体重: 55kg</span>
-            </div>
         </div>
         
         <div class="card result-section" id="results">
             <div class="card-title">
                 <i class="fas fa-utensils"></i>
-                <h2>您的个性化减脂饮食计划</h2>
+                <h2>您的减脂饮食计划</h2>
             </div>
             
             <div id="bmiResult" class="bmi-result"></div>
             
-            <div class="summary-cards">
-                <div class="summary-card">
-                    <div class="label">每日总热量</div>
-                    <div class="value" id="totalCalories">0</div>
-                    <div class="label">大卡</div>
+            <div class="food-replace">
+                <div class="food-replace-title">
+                    <i class="fas fa-exchange-alt"></i> 替换碳水化合物来源
                 </div>
-                <div class="summary-card">
-                    <div class="label">每日蛋白质</div>
-                    <div class="value" id="totalProtein">0</div>
-                    <div class="label">克</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">预计达成时间</div>
-                    <div class="value" id="timeToGoal">8-10</div>
-                    <div class="label">周</div>
+                <div class="replace-options">
+                    <div class="replace-option active" data-food="rice">
+                        <i class="fas fa-bread-slice"></i>
+                        <div>米饭</div>
+                    </div>
+                    <div class="replace-option" data-food="potato">
+                        <i class="fas fa-potato"></i>
+                        <div>土豆</div>
+                    </div>
+                    <div class="replace-option" data-food="sweet_potato">
+                        <i class="fas fa-seedling"></i>
+                        <div>红薯</div>
+                    </div>
+                    <div class="replace-option" data-food="oats">
+                        <i class="fas fa-wheat-awn"></i>
+                        <div>燕麦</div>
+                    </div>
+                    <div class="replace-option" data-food="whole_wheat">
+                        <i class="fas fa-bread-slice"></i>
+                        <div>全麦面包</div>
+                    </div>
                 </div>
             </div>
             
             <div class="meal-plan">
                 <div class="meal-card">
                     <div class="meal-time">
-                        <i class="fas fa-sun"></i>
-                        <span>第一餐：上午 11:00</span>
+                        <i class="fas fa-sun"></i> 第一餐：上午 11:00
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-leaf"></i> 蔬菜</span>
+                    <div class="food-item food-veg">
+                        <span class="food-name">
+                            <i class="fas fa-carrot"></i> 蔬菜
+                        </span>
                         <span class="food-amount" id="veg1">250-300克</span>
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-drumstick-bite"></i> 猪肉 (瘦肉)</span>
+                    <div class="food-item food-protein">
+                        <span class="food-name">
+                            <i class="fas fa-drumstick-bite"></i> 猪肉 (瘦肉)
+                        </span>
                         <span class="food-amount" id="pork1">80-100克</span>
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-egg"></i> 鸡蛋</span>
+                    <div class="food-item food-protein">
+                        <span class="food-name">
+                            <i class="fas fa-egg"></i> 鸡蛋
+                        </span>
                         <span class="food-amount" id="egg1">1-2个</span>
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-bread-slice"></i> 米饭 (熟重)</span>
-                        <span class="food-amount" id="rice1">100克</span>
+                    <div class="food-item food-carb">
+                        <span class="food-name">
+                            <i class="fas fa-bread-slice food-carb"></i> <span id="carb-name1">米饭</span> (熟重)
+                        </span>
+                        <span class="food-amount" id="carb1">100克</span>
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-glass-whiskey"></i> 牛奶</span>
+                    <div class="food-item food-dairy">
+                        <span class="food-name">
+                            <i class="fas fa-wine-bottle"></i> 牛奶
+                        </span>
                         <span class="food-amount" id="milk1">200毫升</span>
                     </div>
                     <div class="nutrition-summary">
-                        <div>本餐营养概览</div>
-                        <div class="nutrition-values">
-                            <div class="nutrition-value">
-                                <div class="value" id="meal1Calories">480-550</div>
-                                <div class="label">大卡</div>
-                            </div>
-                            <div class="nutrition-value">
-                                <div class="value" id="meal1Protein">25-30</div>
-                                <div class="label">蛋白质(克)</div>
-                            </div>
-                            <div class="nutrition-value">
-                                <div class="value">35-45</div>
-                                <div class="label">碳水(克)</div>
-                            </div>
-                        </div>
+                        <i class="fas fa-fire"></i> 本餐热量：约 480-550 大卡
                     </div>
                 </div>
                 
                 <div class="meal-card">
                     <div class="meal-time">
-                        <i class="fas fa-moon"></i>
-                        <span>第二餐：晚上 19:00</span>
+                        <i class="fas fa-moon"></i> 第二餐：晚上 19:00
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-leaf"></i> 蔬菜</span>
+                    <div class="food-item food-veg">
+                        <span class="food-name">
+                            <i class="fas fa-carrot"></i> 蔬菜
+                        </span>
                         <span class="food-amount" id="veg2">300-350克</span>
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-drumstick-bite"></i> 猪肉 (瘦肉)</span>
+                    <div class="food-item food-protein">
+                        <span class="food-name">
+                            <i class="fas fa-drumstick-bite"></i> 猪肉 (瘦肉)
+                        </span>
                         <span class="food-amount" id="pork2">100-120克</span>
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-egg"></i> 鸡蛋</span>
+                    <div class="food-item food-protein">
+                        <span class="food-name">
+                            <i class="fas fa-egg"></i> 鸡蛋
+                        </span>
                         <span class="food-amount" id="egg2">1个</span>
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-bread-slice"></i> 米饭 (熟重)</span>
-                        <span class="food-amount" id="rice2">80克</span>
+                    <div class="food-item food-carb">
+                        <span class="food-name">
+                            <i class="fas fa-bread-slice"></i> <span id="carb-name2">米饭</span> (熟重)
+                        </span>
+                        <span class="food-amount" id="carb2">80克</span>
                     </div>
-                    <div class="food-item">
-                        <span class="food-name"><i class="fas fa-glass-whiskey"></i> 牛奶</span>
+                    <div class="food-item food-dairy">
+                        <span class="food-name">
+                            <i class="fas fa-wine-bottle"></i> 牛奶
+                        </span>
                         <span class="food-amount" id="milk2">150毫升</span>
                     </div>
                     <div class="nutrition-summary">
-                        <div>本餐营养概览</div>
-                        <div class="nutrition-values">
-                            <div class="nutrition-value">
-                                <div class="value" id="meal2Calories">520-600</div>
-                                <div class="label">大卡</div>
-                            </div>
-                            <div class="nutrition-value">
-                                <div class="value" id="meal2Protein">30-35</div>
-                                <div class="label">蛋白质(克)</div>
-                            </div>
-                            <div class="nutrition-value">
-                                <div class="value">30-40</div>
-                                <div class="label">碳水(克)</div>
-                            </div>
-                        </div>
+                        <i class="fas fa-fire"></i> 本餐热量：约 520-600 大卡
                     </div>
                 </div>
             </div>
             
-            <div class="recommendation">
-                <strong>营养建议：</strong> 根据您的数据，每日蛋白质摄入应达到 80-90 克以维持肌肉量。当前计划已充分考虑您的蛋白质需求。建议选择多样化的蔬菜种类，确保维生素和矿物质摄入均衡。
+            <div class="charts-row">
+                <div class="chart-box">
+                    <div class="chart-title">每日营养素比例</div>
+                    <div class="chart-container">
+                        <canvas id="nutritionChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-title">每日热量分布</div>
+                    <div class="chart-container">
+                        <canvas id="caloriesChart"></canvas>
+                    </div>
+                </div>
             </div>
             
             <div class="notes">
                 <div class="note-title">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <h3>重要注意事项</h3>
+                    <i class="fas fa-exclamation-circle"></i> 重要注意事项：
                 </div>
                 <ul>
-                    <li>每日总热量摄入约为 <span id="totalCaloriesValue">1000-1150</span> 大卡，适合减脂期</li>
-                    <li>蛋白质摄入充足（约<span id="totalProteinValue">80-90</span>克），帮助维持肌肉量</li>
-                    <li>选择瘦猪肉（里脊肉），烹饪方式以蒸、煮、烤为主，避免油炸</li>
-                    <li>蔬菜以绿叶蔬菜为主（菠菜、西兰花、生菜等），同时搭配彩色蔬菜</li>
-                    <li>两餐之间如果饥饿，可补充少量坚果（10-15g）或低糖水果（如蓝莓、草莓）</li>
-                    <li>每天饮用2000毫升水，避免含糖饮料，可饮用绿茶、黑咖啡</li>
-                    <li>配合每周3-5次运动（30分钟有氧 + 20分钟力量训练）效果更佳</li>
-                    <li>计划执行2周后重新评估，根据体重变化调整食物量</li>
+                    <li>每日总热量摄入约为 1000-1150 大卡，适合减脂期</li>
+                    <li>蛋白质摄入充足（约80-90克），帮助维持肌肉量</li>
+                    <li>选择瘦猪肉，烹饪方式以蒸、煮、烤为主，避免油炸</li>
+                    <li>蔬菜以绿叶蔬菜为主，如菠菜、西兰花、生菜等</li>
+                    <li>两餐之间如果饥饿，可补充少量坚果或水果</li>
+                    <li>每天饮用2000毫升水，避免含糖饮料</li>
+                    <li>配合每周3-5次运动（有氧+力量训练）效果更佳</li>
                 </ul>
             </div>
             
             <div class="tip">
                 <i class="fas fa-lightbulb"></i>
-                <div class="tip-content">
-                    <strong>健康小贴士：</strong> 
-                    减脂期间要保证充足睡眠（7-8小时）和水分摄入。每周减重0.5-1公斤是安全可持续的速度，不要追求快速减重。坚持科学饮食计划，您的目标体重将在<span id="weeksToGoal">8-10</span>周内达成！减脂期间可能出现平台期，此时可调整饮食结构或增加运动量。
-                </div>
+                <div>健康小贴士：减脂期间要保证充足睡眠（7-8小时）和水分摄入。每周减重0.5-1公斤是安全可持续的速度，不要追求快速减重。记录食物摄入有助于保持计划执行。</div>
             </div>
-        </div>
-        
-        <div class="footer">
-            <p>© 2023 健康饮食计划计算器 | 数据仅供参考，具体饮食请咨询专业营养师</p>
+            
+            <button class="print-btn" onclick="window.print()">
+                <i class="fas fa-print"></i> 打印饮食计划
+            </button>
         </div>
     </div>
 
     <script>
-        document.getElementById('calculate').addEventListener('click', function() {
-            // 显示进度条
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const progressLabels = document.getElementById('progressLabels');
-            progressContainer.style.display = 'block';
-            progressLabels.style.display = 'flex';
-            
-            // 模拟计算进度
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 5;
-                progressBar.style.width = `${progress}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    calculatePlan();
-                }
-            }, 50);
-        });
-        
-        function calculatePlan() {
-            // 获取输入值
-            const height = parseFloat(document.getElementById('height').value);
-            const weight = parseFloat(document.getElementById('weight').value);
-            const target = parseFloat(document.getElementById('target').value);
-            const age = parseFloat(document.getElementById('age').value);
-            const gender = document.getElementById('gender').value;
-            const activity = parseFloat(document.getElementById('activity').value);
-            
-            // 计算BMI
-            const heightM = height / 100;
-            const bmi = weight / (heightM * heightM);
-            
-            // 显示BMI结果
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculate');
+            const resultSection = document.getElementById('results');
             const bmiResult = document.getElementById('bmiResult');
-            bmiResult.textContent = `您的BMI: ${bmi.toFixed(1)} - `;
             
-            // BMI分类
-            let bmiClass = "";
-            let bmiAdvice = "";
-            if (bmi < 18.5) {
-                bmiResult.textContent += "体重过轻";
-                bmiClass = "underweight";
-                bmiAdvice = "您当前体重低于健康范围，减脂前请咨询医生。";
-            } else if (bmi < 24) {
-                bmiResult.textContent += "健康体重";
-                bmiClass = "normal";
-                bmiAdvice = "您当前处于健康体重范围，减脂计划会更安全有效。";
-            } else if (bmi < 28) {
-                bmiResult.textContent += "超重";
-                bmiClass = "overweight";
-                bmiAdvice = "您的体重超过健康范围，本减脂计划将帮助您安全减重。";
-            } else {
-                bmiResult.textContent += "肥胖";
-                bmiClass = "obese";
-                bmiAdvice = "您的体重明显超过健康范围，建议在医生指导下减脂。";
-            }
-            bmiResult.className = `bmi-result ${bmiClass}`;
+            // 错误消息元素
+            const heightError = document.getElementById('height-error');
+            const weightError = document.getElementById('weight-error');
+            const targetError = document.getElementById('target-error');
+            const ageError = document.getElementById('age-error');
             
-            // 添加BMI建议
-            const adviceElement = document.createElement('div');
-            adviceElement.style.marginTop = '15px';
-            adviceElement.style.fontSize = '1.1rem';
-            adviceElement.style.color = '#555';
-            adviceElement.innerHTML = `<i class="fas fa-comment-medical"></i> ${bmiAdvice}`;
-            bmiResult.appendChild(adviceElement);
+            // 食物替换元素
+            const replaceOptions = document.querySelectorAll('.replace-option');
+            let selectedCarbFood = 'rice';
             
-            // 计算基础代谢率 (BMR) - 使用Mifflin-St Jeor公式
-            let bmr;
-            if (gender === "male") {
-                bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-            } else {
-                bmr = 10 * weight + 6.25 * height - 5 * age - 161;
-            }
+            // 食物数据库
+            const carbFoods = {
+                rice: { name: "米饭", ratio: 1.0, icon: "fas fa-bread-slice" },
+                potato: { name: "土豆", ratio: 1.5, icon: "fas fa-potato" },
+                sweet_potato: { name: "红薯", ratio: 1.3, icon: "fas fa-seedling" },
+                oats: { name: "燕麦", ratio: 0.8, icon: "fas fa-wheat-awn" },
+                whole_wheat: { name: "全麦面包", ratio: 0.7, icon: "fas fa-bread-slice" }
+            };
             
-            // 计算每日总能量消耗 (TDEE)
-            const tdee = bmr * activity;
+            // 初始化图表
+            const ctx = document.getElementById('nutritionChart').getContext('2d');
+            const nutritionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['蛋白质', '碳水化合物', '脂肪'],
+                    datasets: [{
+                        data: [35, 45, 20],
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#f39c12'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: {
+                                size: 14
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            });
             
-            // 减脂期每日摄入热量 (比TDEE少500大卡，但不少于1200大卡)
-            const dailyCalories = Math.max(tdee - 500, 1200);
+            // 热量图表
+            const caloriesCtx = document.getElementById('caloriesChart').getContext('2d');
+            const caloriesChart = new Chart(caloriesCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['早餐', '晚餐'],
+                    datasets: [{
+                        data: [500, 600],
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: {
+                                size: 14
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            });
             
-            // 计算蛋白质需求 (1.6-2.2克/公斤体重)
-            const proteinPerKg = bmi > 25 ? 2.0 : 1.8; // 超重/肥胖者需要更多蛋白质
-            const proteinNeeded = Math.round(weight * proteinPerKg);
+            // 食物替换功能
+            replaceOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除所有激活状态
+                    replaceOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // 添加当前激活状态
+                    this.classList.add('active');
+                    
+                    // 更新选择的食物
+                    selectedCarbFood = this.dataset.food;
+                    const foodData = carbFoods[selectedCarbFood];
+                    
+                    // 更新食物名称
+                    document.getElementById('carb-name1').textContent = foodData.name;
+                    document.getElementById('carb-name2').textContent = foodData.name;
+                    
+                    // 更新食物图标
+                    document.querySelectorAll('.food-carb i').forEach(icon => {
+                        icon.className = foodData.icon;
+                    });
+                    
+                    // 更新食物量（根据比例调整）
+                    const intensity = parseFloat(document.getElementById('activity').value) / 1.55;
+                    const carb1 = document.getElementById('carb1');
+                    const carb2 = document.getElementById('carb2');
+                    
+                    if (carb1.dataset.originalValue && carb2.dataset.originalValue) {
+                        const originalValue1 = parseFloat(carb1.dataset.originalValue);
+                        const originalValue2 = parseFloat(carb2.dataset.originalValue);
+                        
+                        const newValue1 = Math.round(originalValue1 * foodData.ratio * intensity);
+                        const newValue2 = Math.round(originalValue2 * foodData.ratio * intensity);
+                        
+                        carb1.textContent = `${newValue1}克`;
+                        carb2.textContent = `${newValue2}克`;
+                    }
+                });
+            });
             
-            // 计算达成目标时间 (每周减0.5-1kg)
-            const weightDiff = weight - target;
-            let weeksMin = 0, weeksMax = 0;
-            if (weight > target) {
-                weeksMin = Math.round(weightDiff / 1);
-                weeksMax = Math.round(weightDiff / 0.5);
-            } else {
-                weeksMin = 0;
-                weeksMax = 0;
-            }
+            calculateBtn.addEventListener('click', function() {
+                // 获取输入值
+                const height = parseFloat(document.getElementById('height').value);
+                const weight = parseFloat(document.getElementById('weight').value);
+                const target = parseFloat(document.getElementById('target').value);
+                const activity = parseFloat(document.getElementById('activity').value);
+                const gender = document.getElementById('gender').value;
+                const age = parseInt(document.getElementById('age').value);
+                
+                // 重置错误消息
+                heightError.style.display = 'none';
+                weightError.style.display = 'none';
+                targetError.style.display = 'none';
+                ageError.style.display = 'none';
+                
+                // 验证输入
+                let isValid = true;
+                
+                if (isNaN(height) || height < 100 || height > 250) {
+                    heightError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (isNaN(weight) || weight < 30 || weight > 200) {
+                    weightError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (isNaN(target) || target < 30 || target > 200 || target >= weight) {
+                    targetError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (isNaN(age) || age < 15 || age > 100) {
+                    ageError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (!isValid) return;
+                
+                // 显示加载状态
+                calculateBtn.classList.add('loading');
+                calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 计算中...';
+                
+                // 模拟计算延迟
+                setTimeout(() => {
+                    // 计算BMI
+                    const heightM = height / 100;
+                    const bmi = weight / (heightM * heightM);
+                    
+                    // 显示BMI结果
+                    bmiResult.textContent = `您的BMI: ${bmi.toFixed(1)} - `;
+                    
+                    // BMI分类
+                    if (bmi < 18.5) {
+                        bmiResult.textContent += "体重过轻";
+                        bmiResult.className = "bmi-result underweight";
+                    } else if (bmi < 24) {
+                        bmiResult.textContent += "健康体重";
+                        bmiResult.className = "bmi-result normal";
+                    } else if (bmi < 28) {
+                        bmiResult.textContent += "超重";
+                        bmiResult.className = "bmi-result overweight";
+                    } else {
+                        bmiResult.textContent += "肥胖";
+                        bmiResult.className = "bmi-result obese";
+                    }
+                    
+                    // 根据目标体重调整食物量（示例逻辑）
+                    const weightDiff = weight - target;
+                    const intensity = activity / 1.55; // 基于中等活动水平
+                    
+                    // 更新食物量显示
+                    const veg1 = document.getElementById('veg1');
+                    const pork1 = document.getElementById('pork1');
+                    const egg1 = document.getElementById('egg1');
+                    const carb1 = document.getElementById('carb1');
+                    const milk1 = document.getElementById('milk1');
+                    
+                    const veg2 = document.getElementById('veg2');
+                    const pork2 = document.getElementById('pork2');
+                    const egg2 = document.getElementById('egg2');
+                    const carb2 = document.getElementById('carb2');
+                    const milk2 = document.getElementById('milk2');
+                    
+                    // 存储原始碳水化合物值（米饭基准）
+                    const carbBase1 = 100;
+                    const carbBase2 = 80;
+                    carb1.dataset.originalValue = carbBase1;
+                    carb2.dataset.originalValue = carbBase2;
+                    
+                    // 获取当前选择的碳水化合物食物
+                    const foodData = carbFoods[selectedCarbFood];
+                    
+                    // 更新食物名称
+                    document.getElementById('carb-name1').textContent = foodData.name;
+                    document.getElementById('carb-name2').textContent = foodData.name;
+                    
+                    // 更新食物图标
+                    document.querySelectorAll('.food-carb i').forEach(icon => {
+                        icon.className = foodData.icon;
+                    });
+                    
+                    // 更新食物量
+                    veg1.textContent = `${Math.round(250 * intensity)}-${Math.round(300 * intensity)}克`;
+                    pork1.textContent = `${Math.round(80 * intensity)}-${Math.round(100 * intensity)}克`;
+                    egg1.textContent = `${Math.round(1 * intensity)}-${Math.round(2 * intensity)}个`;
+                    carb1.textContent = `${Math.round(carbBase1 * foodData.ratio * intensity)}克`;
+                    milk1.textContent = `${Math.round(200 * intensity)}毫升`;
+                    
+                    veg2.textContent = `${Math.round(300 * intensity)}-${Math.round(350 * intensity)}克`;
+                    pork2.textContent = `${Math.round(100 * intensity)}-${Math.round(120 * intensity)}克`;
+                    egg2.textContent = `${Math.round(1 * intensity)}个`;
+                    carb2.textContent = `${Math.round(carbBase2 * foodData.ratio * intensity)}克`;
+                    milk2.textContent = `${Math.round(150 * intensity)}毫升`;
+                    
+                    // 更新图表数据
+                    nutritionChart.data.datasets[0].data = [
+                        Math.round(35 * intensity),
+                        Math.round(45 * intensity),
+                        Math.round(20 * intensity)
+                    ];
+                    nutritionChart.update();
+                    
+                    // 更新热量图表
+                    caloriesChart.data.datasets[0].data = [
+                        Math.round(500 * intensity),
+                        Math.round(600 * intensity)
+                    ];
+                    caloriesChart.update();
+                    
+                    // 显示结果区域
+                    resultSection.style.display = 'block';
+                    
+                    // 移除加载状态
+                    calculateBtn.classList.remove('loading');
+                    calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> 计算我的饮食计划';
+                    
+                    // 滚动到结果区域
+                    resultSection.scrollIntoView({behavior: 'smooth'});
+                }, 1000);
+            });
             
-            // 更新总热量和蛋白质显示
-            document.getElementById('totalCalories').textContent = Math.round(dailyCalories);
-            document.getElementById('totalProtein').textContent = proteinNeeded;
-            
-            if (weeksMin > 0) {
-                document.getElementById('timeToGoal').textContent = `${weeksMin}-${weeksMax}`;
-                document.getElementById('weeksToGoal').textContent = `${weeksMin}-${weeksMax}`;
-            } else {
-                document.getElementById('timeToGoal').textContent = "目标已达成";
-                document.getElementById('weeksToGoal').textContent = "0";
-            }
-            
-            // 计算并更新每餐的食物量（基于减脂需求）
-            const calorieRatio = dailyCalories / 1800; // 1800作为基准热量
-            const adjustFactor = Math.min(Math.max(calorieRatio, 0.7), 1.3); // 限制调整范围
-            
-            // 第一餐
-            document.getElementById('veg1').textContent = `${Math.round(250 * adjustFactor)}-${Math.round(300 * adjustFactor)}克`;
-            document.getElementById('pork1').textContent = `${Math.round(80 * adjustFactor)}-${Math.round(100 * adjustFactor)}克`;
-            document.getElementById('egg1').textContent = adjustFactor > 1.1 ? "2个" : "1-2个";
-            document.getElementById('rice1').textContent = `${Math.round(100 * adjustFactor)}克`;
-            document.getElementById('milk1').textContent = "200毫升";
-            
-            // 第二餐
-            document.getElementById('veg2').textContent = `${Math.round(300 * adjustFactor)}-${Math.round(350 * adjustFactor)}克`;
-            document.getElementById('pork2').textContent = `${Math.round(100 * adjustFactor)}-${Math.round(120 * adjustFactor)}克`;
-            document.getElementById('egg2').textContent = "1个";
-            document.getElementById('rice2').textContent = `${Math.round(80 * adjustFactor)}克`;
-            document.getElementById('milk2').textContent = "150毫升";
-            
-            // 计算餐食热量和蛋白质（估算）
-            const meal1Calories = Math.round(500 * adjustFactor);
-            const meal2Calories = Math.round(550 * adjustFactor);
-            const meal1Protein = Math.round(30 * adjustFactor);
-            const meal2Protein = Math.round(35 * adjustFactor);
-            
-            document.getElementById('meal1Calories').textContent = `${meal1Calories-30}-${meal1Calories+20}`;
-            document.getElementById('meal2Calories').textContent = `${meal2Calories-30}-${meal2Calories+30}`;
-            document.getElementById('meal1Protein').textContent = `${meal1Protein-3}-${meal1Protein+2}`;
-            document.getElementById('meal2Protein').textContent = `${meal2Protein-3}-${meal2Protein+2}`;
-            
-            // 更新注意事项中的值
-            document.getElementById('totalCaloriesValue').textContent = `${Math.round(dailyCalories)-50}-${Math.round(dailyCalories)+50}`;
-            document.getElementById('totalProteinValue').textContent = `${proteinNeeded-5}-${proteinNeeded+5}`;
-            
-            // 更新进度标签
-            document.querySelector('.progress-labels span:first-child').textContent = `当前体重: ${weight}kg`;
-            document.querySelector('.progress-labels span:last-child').textContent = `目标体重: ${target}kg`;
-            
-            // 显示结果区域
-            document.getElementById('results').style.display = 'block';
-            
-            // 滚动到结果区域
-            document.getElementById('results').scrollIntoView({behavior: 'smooth'});
-        }
+            // 输入验证
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    const errorId = this.id + '-error';
+                    const errorElement = document.getElementById(errorId);
+                    
+                    if (errorElement) {
+                        const value = parseFloat(this.value);
+                        const min = parseFloat(this.min);
+                        const max = parseFloat(this.max);
+                        
+                        if (isNaN(value) || value < min || value > max) {
+                            errorElement.style.display = 'block';
+                        } else {
+                            errorElement.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
