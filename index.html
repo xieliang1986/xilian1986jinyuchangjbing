@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xl减脂饮食计划计算器</title>
+    <title>全能减脂饮食计划计算器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -241,6 +241,18 @@
             color: var(--primary);
         }
         
+        .replace-category {
+            margin-bottom: 15px;
+        }
+        
+        .category-title {
+            margin: 10px 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            color: var(--dark);
+        }
+        
         .replace-options {
             display: flex;
             flex-wrap: wrap;
@@ -249,7 +261,7 @@
         
         .replace-option {
             flex: 1;
-            min-width: 120px;
+            min-width: 100px;
             background: white;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -272,7 +284,7 @@
         
         .replace-option i {
             display: block;
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 8px;
         }
         
@@ -396,6 +408,33 @@
             color: var(--dark);
         }
         
+        /* 进度条 */
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
         /* 注意事项 */
         .notes {
             background: #fff8e1;
@@ -478,6 +517,11 @@
             .chart-box {
                 padding: 10px;
             }
+            
+            .replace-option {
+                min-width: 80px;
+                padding: 8px;
+            }
         }
         
         /* 错误消息 */
@@ -523,13 +567,25 @@
             background: #27ae60;
             transform: translateY(-2px);
         }
+        
+        .calories-display {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--dark);
+            box-shadow: var(--box-shadow);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="pulse">
-            <h1><i class="fas fa-apple-alt"></i> xl减脂饮食计划计算器</h1>
-            <p class="subtitle">根据您的身体数据定制每日两餐减脂计划</p>
+            <h1><i class="fas fa-apple-alt"></i> 全能减脂饮食计划计算器</h1>
+            <p class="subtitle">根据您的身体数据和饮食偏好定制个性化减脂计划</p>
         </header>
         
         <div class="card">
@@ -584,36 +640,128 @@
         <div class="card result-section" id="results">
             <div class="card-title">
                 <i class="fas fa-utensils"></i>
-                <h2>您的减脂饮食计划</h2>
+                <h2>您的个性化减脂饮食计划</h2>
             </div>
             
             <div id="bmiResult" class="bmi-result"></div>
             
             <div class="food-replace">
                 <div class="food-replace-title">
-                    <i class="fas fa-exchange-alt"></i> 替换碳水化合物来源
+                    <i class="fas fa-exchange-alt"></i> 自定义您的饮食偏好
                 </div>
-                <div class="replace-options">
-                    <div class="replace-option active" data-food="rice">
-                        <i class="fas fa-bread-slice"></i>
-                        <div>米饭</div>
+                
+                <div class="replace-category">
+                    <div class="category-title">
+                        <i class="fas fa-drumstick-bite" style="color: var(--food-protein);"></i> 蛋白质来源
                     </div>
-                    <div class="replace-option" data-food="potato">
-                        <i class="fas fa-potato"></i>
-                        <div>土豆</div>
+                    <div class="replace-options">
+                        <div class="replace-option active" data-category="protein" data-food="pork">
+                            <i class="fas fa-drumstick-bite" style="color: var(--food-protein);"></i>
+                            <div>猪肉</div>
+                        </div>
+                        <div class="replace-option" data-category="protein" data-food="chicken">
+                            <i class="fas fa-drumstick-bite" style="color: var(--food-protein);"></i>
+                            <div>鸡肉</div>
+                        </div>
+                        <div class="replace-option" data-category="protein" data-food="beef">
+                            <i class="fas fa-hamburger" style="color: var(--food-protein);"></i>
+                            <div>牛肉</div>
+                        </div>
+                        <div class="replace-option" data-category="protein" data-food="fish">
+                            <i class="fas fa-fish" style="color: var(--food-protein);"></i>
+                            <div>鱼虾</div>
+                        </div>
+                        <div class="replace-option" data-category="protein" data-food="tofu">
+                            <i class="fas fa-seedling" style="color: var(--food-protein);"></i>
+                            <div>豆腐</div>
+                        </div>
                     </div>
-                    <div class="replace-option" data-food="sweet_potato">
-                        <i class="fas fa-seedling"></i>
-                        <div>红薯</div>
+                </div>
+                
+                <div class="replace-category">
+                    <div class="category-title">
+                        <i class="fas fa-bread-slice" style="color: var(--food-carb);"></i> 碳水化合物来源
                     </div>
-                    <div class="replace-option" data-food="oats">
-                        <i class="fas fa-wheat-awn"></i>
-                        <div>燕麦</div>
+                    <div class="replace-options">
+                        <div class="replace-option active" data-category="carb" data-food="rice">
+                            <i class="fas fa-bread-slice" style="color: var(--food-carb);"></i>
+                            <div>米饭</div>
+                        </div>
+                        <div class="replace-option" data-category="carb" data-food="potato">
+                            <i class="fas fa-potato" style="color: var(--food-carb);"></i>
+                            <div>土豆</div>
+                        </div>
+                        <div class="replace-option" data-category="carb" data-food="sweet_potato">
+                            <i class="fas fa-seedling" style="color: var(--food-carb);"></i>
+                            <div>红薯</div>
+                        </div>
+                        <div class="replace-option" data-category="carb" data-food="oats">
+                            <i class="fas fa-wheat-awn" style="color: var(--food-carb);"></i>
+                            <div>燕麦</div>
+                        </div>
+                        <div class="replace-option" data-category="carb" data-food="whole_wheat">
+                            <i class="fas fa-bread-slice" style="color: var(--food-carb);"></i>
+                            <div>全麦面包</div>
+                        </div>
                     </div>
-                    <div class="replace-option" data-food="whole_wheat">
-                        <i class="fas fa-bread-slice"></i>
-                        <div>全麦面包</div>
+                </div>
+                
+                <div class="replace-category">
+                    <div class="category-title">
+                        <i class="fas fa-carrot" style="color: var(--food-veg);"></i> 蔬菜选择
                     </div>
+                    <div class="replace-options">
+                        <div class="replace-option active" data-category="veg" data-food="mixed">
+                            <i class="fas fa-carrot" style="color: var(--food-veg);"></i>
+                            <div>混合蔬菜</div>
+                        </div>
+                        <div class="replace-option" data-category="veg" data-food="leafy">
+                            <i class="fas fa-leaf" style="color: var(--food-veg);"></i>
+                            <div>绿叶蔬菜</div>
+                        </div>
+                        <div class="replace-option" data-category="veg" data-food="cruciferous">
+                            <i class="fas fa-seedling" style="color: var(--food-veg);"></i>
+                            <div>十字花科</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="replace-category">
+                    <div class="category-title">
+                        <i class="fas fa-wine-bottle" style="color: var(--food-dairy);"></i> 乳制品选择
+                    </div>
+                    <div class="replace-options">
+                        <div class="replace-option active" data-category="dairy" data-food="milk">
+                            <i class="fas fa-wine-bottle" style="color: var(--food-dairy);"></i>
+                            <div>牛奶</div>
+                        </div>
+                        <div class="replace-option" data-category="dairy" data-food="yogurt">
+                            <i class="fas fa-blender" style="color: var(--food-dairy);"></i>
+                            <div>酸奶</div>
+                        </div>
+                        <div class="replace-option" data-category="dairy" data-food="soy_milk">
+                            <i class="fas fa-mug-hot" style="color: var(--food-dairy);"></i>
+                            <div>豆浆</div>
+                        </div>
+                        <div class="replace-option" data-category="dairy" data-food="almond_milk">
+                            <i class="fas fa-mug-hot" style="color: var(--food-dairy);"></i>
+                            <div>杏仁奶</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="calories-display">
+                <i class="fas fa-fire"></i> 每日总热量摄入: <span id="total-calories">1000-1150</span> 大卡
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="weight-progress" style="width: 30%"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>当前体重: <span id="current-weight">60</span>kg</span>
+                    <span>目标体重: <span id="target-weight">55</span>kg</span>
                 </div>
             </div>
             
@@ -624,15 +772,15 @@
                     </div>
                     <div class="food-item food-veg">
                         <span class="food-name">
-                            <i class="fas fa-carrot"></i> 蔬菜
+                            <i class="fas fa-carrot"></i> <span id="veg-name1">混合蔬菜</span>
                         </span>
                         <span class="food-amount" id="veg1">250-300克</span>
                     </div>
                     <div class="food-item food-protein">
                         <span class="food-name">
-                            <i class="fas fa-drumstick-bite"></i> 猪肉 (瘦肉)
+                            <i class="fas fa-drumstick-bite"></i> <span id="protein-name1">猪肉</span> (瘦肉)
                         </span>
-                        <span class="food-amount" id="pork1">80-100克</span>
+                        <span class="food-amount" id="protein1">80-100克</span>
                     </div>
                     <div class="food-item food-protein">
                         <span class="food-name">
@@ -642,15 +790,15 @@
                     </div>
                     <div class="food-item food-carb">
                         <span class="food-name">
-                            <i class="fas fa-bread-slice food-carb"></i> <span id="carb-name1">米饭</span> (熟重)
+                            <i class="fas fa-bread-slice"></i> <span id="carb-name1">米饭</span> (熟重)
                         </span>
                         <span class="food-amount" id="carb1">100克</span>
                     </div>
                     <div class="food-item food-dairy">
                         <span class="food-name">
-                            <i class="fas fa-wine-bottle"></i> 牛奶
+                            <i class="fas fa-wine-bottle"></i> <span id="dairy-name1">牛奶</span>
                         </span>
-                        <span class="food-amount" id="milk1">200毫升</span>
+                        <span class="food-amount" id="dairy1">200毫升</span>
                     </div>
                     <div class="nutrition-summary">
                         <i class="fas fa-fire"></i> 本餐热量：约 480-550 大卡
@@ -663,15 +811,15 @@
                     </div>
                     <div class="food-item food-veg">
                         <span class="food-name">
-                            <i class="fas fa-carrot"></i> 蔬菜
+                            <i class="fas fa-carrot"></i> <span id="veg-name2">混合蔬菜</span>
                         </span>
                         <span class="food-amount" id="veg2">300-350克</span>
                     </div>
                     <div class="food-item food-protein">
                         <span class="food-name">
-                            <i class="fas fa-drumstick-bite"></i> 猪肉 (瘦肉)
+                            <i class="fas fa-drumstick-bite"></i> <span id="protein-name2">猪肉</span> (瘦肉)
                         </span>
-                        <span class="food-amount" id="pork2">100-120克</span>
+                        <span class="food-amount" id="protein2">100-120克</span>
                     </div>
                     <div class="food-item food-protein">
                         <span class="food-name">
@@ -687,9 +835,9 @@
                     </div>
                     <div class="food-item food-dairy">
                         <span class="food-name">
-                            <i class="fas fa-wine-bottle"></i> 牛奶
+                            <i class="fas fa-wine-bottle"></i> <span id="dairy-name2">牛奶</span>
                         </span>
-                        <span class="food-amount" id="milk2">150毫升</span>
+                        <span class="food-amount" id="dairy2">150毫升</span>
                     </div>
                     <div class="nutrition-summary">
                         <i class="fas fa-fire"></i> 本餐热量：约 520-600 大卡
@@ -719,7 +867,7 @@
                 <ul>
                     <li>每日总热量摄入约为 1000-1150 大卡，适合减脂期</li>
                     <li>蛋白质摄入充足（约80-90克），帮助维持肌肉量</li>
-                    <li>选择瘦猪肉，烹饪方式以蒸、煮、烤为主，避免油炸</li>
+                    <li>烹饪方式以蒸、煮、烤为主，避免油炸</li>
                     <li>蔬菜以绿叶蔬菜为主，如菠菜、西兰花、生菜等</li>
                     <li>两餐之间如果饥饿，可补充少量坚果或水果</li>
                     <li>每天饮用2000毫升水，避免含糖饮料</li>
@@ -743,6 +891,10 @@
             const calculateBtn = document.getElementById('calculate');
             const resultSection = document.getElementById('results');
             const bmiResult = document.getElementById('bmiResult');
+            const totalCaloriesEl = document.getElementById('total-calories');
+            const currentWeightEl = document.getElementById('current-weight');
+            const targetWeightEl = document.getElementById('target-weight');
+            const weightProgress = document.getElementById('weight-progress');
             
             // 错误消息元素
             const heightError = document.getElementById('height-error');
@@ -752,15 +904,42 @@
             
             // 食物替换元素
             const replaceOptions = document.querySelectorAll('.replace-option');
-            let selectedCarbFood = 'rice';
+            
+            // 用户选择的食物
+            let selectedFoods = {
+                protein: 'pork',
+                carb: 'rice',
+                veg: 'mixed',
+                dairy: 'milk'
+            };
             
             // 食物数据库
-            const carbFoods = {
-                rice: { name: "米饭", ratio: 1.0, icon: "fas fa-bread-slice" },
-                potato: { name: "土豆", ratio: 1.5, icon: "fas fa-potato" },
-                sweet_potato: { name: "红薯", ratio: 1.3, icon: "fas fa-seedling" },
-                oats: { name: "燕麦", ratio: 0.8, icon: "fas fa-wheat-awn" },
-                whole_wheat: { name: "全麦面包", ratio: 0.7, icon: "fas fa-bread-slice" }
+            const foods = {
+                protein: {
+                    pork: { name: "猪肉", ratio: 1.0, icon: "fas fa-drumstick-bite" },
+                    chicken: { name: "鸡肉", ratio: 1.1, icon: "fas fa-drumstick-bite" },
+                    beef: { name: "牛肉", ratio: 0.9, icon: "fas fa-hamburger" },
+                    fish: { name: "鱼虾", ratio: 1.2, icon: "fas fa-fish" },
+                    tofu: { name: "豆腐", ratio: 1.3, icon: "fas fa-seedling" }
+                },
+                carb: {
+                    rice: { name: "米饭", ratio: 1.0, icon: "fas fa-bread-slice" },
+                    potato: { name: "土豆", ratio: 1.5, icon: "fas fa-potato" },
+                    sweet_potato: { name: "红薯", ratio: 1.3, icon: "fas fa-seedling" },
+                    oats: { name: "燕麦", ratio: 0.8, icon: "fas fa-wheat-awn" },
+                    whole_wheat: { name: "全麦面包", ratio: 0.7, icon: "fas fa-bread-slice" }
+                },
+                veg: {
+                    mixed: { name: "混合蔬菜", ratio: 1.0, icon: "fas fa-carrot" },
+                    leafy: { name: "绿叶蔬菜", ratio: 1.2, icon: "fas fa-leaf" },
+                    cruciferous: { name: "十字花科", ratio: 1.1, icon: "fas fa-seedling" }
+                },
+                dairy: {
+                    milk: { name: "牛奶", ratio: 1.0, icon: "fas fa-wine-bottle" },
+                    yogurt: { name: "酸奶", ratio: 0.9, icon: "fas fa-blender" },
+                    soy_milk: { name: "豆浆", ratio: 1.1, icon: "fas fa-mug-hot" },
+                    almond_milk: { name: "杏仁奶", ratio: 0.8, icon: "fas fa-mug-hot" }
+                }
             };
             
             // 初始化图表
@@ -809,7 +988,7 @@
             const caloriesChart = new Chart(caloriesCtx, {
                 type: 'pie',
                 data: {
-                    labels: ['早餐', '晚餐'],
+                    labels: ['第一餐', '第二餐'],
                     datasets: [{
                         data: [500, 600],
                         backgroundColor: [
@@ -847,42 +1026,81 @@
             // 食物替换功能
             replaceOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    // 移除所有激活状态
-                    replaceOptions.forEach(opt => opt.classList.remove('active'));
+                    const category = this.dataset.category;
+                    const food = this.dataset.food;
+                    
+                    // 移除该类别所有激活状态
+                    document.querySelectorAll(`.replace-option[data-category="${category}"]`)
+                        .forEach(opt => opt.classList.remove('active'));
                     
                     // 添加当前激活状态
                     this.classList.add('active');
                     
                     // 更新选择的食物
-                    selectedCarbFood = this.dataset.food;
-                    const foodData = carbFoods[selectedCarbFood];
+                    selectedFoods[category] = food;
                     
-                    // 更新食物名称
-                    document.getElementById('carb-name1').textContent = foodData.name;
-                    document.getElementById('carb-name2').textContent = foodData.name;
-                    
-                    // 更新食物图标
-                    document.querySelectorAll('.food-carb i').forEach(icon => {
-                        icon.className = foodData.icon;
-                    });
-                    
-                    // 更新食物量（根据比例调整）
-                    const intensity = parseFloat(document.getElementById('activity').value) / 1.55;
-                    const carb1 = document.getElementById('carb1');
-                    const carb2 = document.getElementById('carb2');
-                    
-                    if (carb1.dataset.originalValue && carb2.dataset.originalValue) {
-                        const originalValue1 = parseFloat(carb1.dataset.originalValue);
-                        const originalValue2 = parseFloat(carb2.dataset.originalValue);
-                        
-                        const newValue1 = Math.round(originalValue1 * foodData.ratio * intensity);
-                        const newValue2 = Math.round(originalValue2 * foodData.ratio * intensity);
-                        
-                        carb1.textContent = `${newValue1}克`;
-                        carb2.textContent = `${newValue2}克`;
+                    // 如果结果已计算，更新显示
+                    if (resultSection.style.display === 'block') {
+                        updateFoodDisplay();
                     }
                 });
             });
+            
+            // 更新食物显示
+            function updateFoodDisplay() {
+                // 获取当前强度因子
+                const intensity = parseFloat(document.getElementById('activity').value) / 1.55;
+                
+                // 更新蛋白质显示
+                const proteinData = foods.protein[selectedFoods.protein];
+                document.getElementById('protein-name1').textContent = proteinData.name;
+                document.getElementById('protein-name2').textContent = proteinData.name;
+                document.querySelectorAll('.food-protein i').forEach(icon => {
+                    icon.className = proteinData.icon;
+                });
+                
+                // 更新碳水化合物显示
+                const carbData = foods.carb[selectedFoods.carb];
+                document.getElementById('carb-name1').textContent = carbData.name;
+                document.getElementById('carb-name2').textContent = carbData.name;
+                document.querySelectorAll('.food-carb i').forEach(icon => {
+                    icon.className = carbData.icon;
+                });
+                
+                // 更新蔬菜显示
+                const vegData = foods.veg[selectedFoods.veg];
+                document.getElementById('veg-name1').textContent = vegData.name;
+                document.getElementById('veg-name2').textContent = vegData.name;
+                document.querySelectorAll('.food-veg i').forEach(icon => {
+                    icon.className = vegData.icon;
+                });
+                
+                // 更新乳制品显示
+                const dairyData = foods.dairy[selectedFoods.dairy];
+                document.getElementById('dairy-name1').textContent = dairyData.name;
+                document.getElementById('dairy-name2').textContent = dairyData.name;
+                document.querySelectorAll('.food-dairy i').forEach(icon => {
+                    icon.className = dairyData.icon;
+                });
+                
+                // 更新食物量
+                document.getElementById('protein1').textContent = `${Math.round(80 * proteinData.ratio * intensity)}-${Math.round(100 * proteinData.ratio * intensity)}克`;
+                document.getElementById('protein2').textContent = `${Math.round(100 * proteinData.ratio * intensity)}-${Math.round(120 * proteinData.ratio * intensity)}克`;
+                
+                document.getElementById('carb1').textContent = `${Math.round(100 * carbData.ratio * intensity)}克`;
+                document.getElementById('carb2').textContent = `${Math.round(80 * carbData.ratio * intensity)}克`;
+                
+                document.getElementById('veg1').textContent = `${Math.round(250 * vegData.ratio * intensity)}-${Math.round(300 * vegData.ratio * intensity)}克`;
+                document.getElementById('veg2').textContent = `${Math.round(300 * vegData.ratio * intensity)}-${Math.round(350 * vegData.ratio * intensity)}克`;
+                
+                document.getElementById('dairy1').textContent = `${Math.round(200 * dairyData.ratio * intensity)}毫升`;
+                document.getElementById('dairy2').textContent = `${Math.round(150 * dairyData.ratio * intensity)}毫升`;
+                
+                // 更新总热量
+                const totalCalories = Math.round((480 + 520) * intensity);
+                const range = Math.round(70 * intensity);
+                totalCaloriesEl.textContent = `${totalCalories}-${totalCalories + range} 大卡`;
+            }
             
             calculateBtn.addEventListener('click', function() {
                 // 获取输入值
@@ -952,55 +1170,17 @@
                         bmiResult.className = "bmi-result obese";
                     }
                     
-                    // 根据目标体重调整食物量（示例逻辑）
-                    const weightDiff = weight - target;
-                    const intensity = activity / 1.55; // 基于中等活动水平
+                    // 更新食物显示
+                    updateFoodDisplay();
                     
-                    // 更新食物量显示
-                    const veg1 = document.getElementById('veg1');
-                    const pork1 = document.getElementById('pork1');
-                    const egg1 = document.getElementById('egg1');
-                    const carb1 = document.getElementById('carb1');
-                    const milk1 = document.getElementById('milk1');
-                    
-                    const veg2 = document.getElementById('veg2');
-                    const pork2 = document.getElementById('pork2');
-                    const egg2 = document.getElementById('egg2');
-                    const carb2 = document.getElementById('carb2');
-                    const milk2 = document.getElementById('milk2');
-                    
-                    // 存储原始碳水化合物值（米饭基准）
-                    const carbBase1 = 100;
-                    const carbBase2 = 80;
-                    carb1.dataset.originalValue = carbBase1;
-                    carb2.dataset.originalValue = carbBase2;
-                    
-                    // 获取当前选择的碳水化合物食物
-                    const foodData = carbFoods[selectedCarbFood];
-                    
-                    // 更新食物名称
-                    document.getElementById('carb-name1').textContent = foodData.name;
-                    document.getElementById('carb-name2').textContent = foodData.name;
-                    
-                    // 更新食物图标
-                    document.querySelectorAll('.food-carb i').forEach(icon => {
-                        icon.className = foodData.icon;
-                    });
-                    
-                    // 更新食物量
-                    veg1.textContent = `${Math.round(250 * intensity)}-${Math.round(300 * intensity)}克`;
-                    pork1.textContent = `${Math.round(80 * intensity)}-${Math.round(100 * intensity)}克`;
-                    egg1.textContent = `${Math.round(1 * intensity)}-${Math.round(2 * intensity)}个`;
-                    carb1.textContent = `${Math.round(carbBase1 * foodData.ratio * intensity)}克`;
-                    milk1.textContent = `${Math.round(200 * intensity)}毫升`;
-                    
-                    veg2.textContent = `${Math.round(300 * intensity)}-${Math.round(350 * intensity)}克`;
-                    pork2.textContent = `${Math.round(100 * intensity)}-${Math.round(120 * intensity)}克`;
-                    egg2.textContent = `${Math.round(1 * intensity)}个`;
-                    carb2.textContent = `${Math.round(carbBase2 * foodData.ratio * intensity)}克`;
-                    milk2.textContent = `${Math.round(150 * intensity)}毫升`;
+                    // 更新进度条
+                    currentWeightEl.textContent = weight;
+                    targetWeightEl.textContent = target;
+                    const progressPercent = Math.min(100, Math.max(0, ((weight - target) / (weight - target)) * 100);
+                    weightProgress.style.width = `${progressPercent}%`;
                     
                     // 更新图表数据
+                    const intensity = activity / 1.55;
                     nutritionChart.data.datasets[0].data = [
                         Math.round(35 * intensity),
                         Math.round(45 * intensity),
