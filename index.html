@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>金鱼疾病查询手册</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
         
         body {
@@ -19,6 +19,7 @@
             line-height: 1.6;
             padding: 15px;
             min-height: 100vh;
+            background-attachment: fixed;
         }
         
         .container {
@@ -31,6 +32,7 @@
             padding: 20px 0;
             color: white;
             margin-bottom: 20px;
+            position: relative;
         }
         
         .logo {
@@ -42,19 +44,30 @@
         }
         
         .logo i {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             color: #FFD700;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         
         h1 {
-            font-size: 1.8rem;
+            font-size: 2.0rem;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
         }
         
         .subtitle {
-            font-size: 1rem;
+            font-size: 1.1rem;
             opacity: 0.9;
             margin-top: 5px;
+            background: rgba(0,0,0,0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            display: inline-block;
         }
         
         .search-container {
@@ -65,20 +78,24 @@
             margin-bottom: 20px;
             display: flex;
             align-items: center;
+            position: sticky;
+            top: 15px;
+            z-index: 10;
         }
         
         #search-input {
             flex: 1;
             border: none;
             outline: none;
-            font-size: 1rem;
+            font-size: 1.1rem;
             padding: 10px 0;
             background: transparent;
         }
         
         .search-container i {
             color: #1a6aa2;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            margin-right: 10px;
         }
         
         .filters {
@@ -86,144 +103,208 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
+            justify-content: center;
         }
         
         .filter-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            padding: 8px 15px;
+            padding: 10px 18px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            min-width: 80px;
+            text-align: center;
         }
         
         .filter-btn.active {
             background: white;
             color: #1a6aa2;
             font-weight: bold;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
         }
         
         .disease-list {
             display: grid;
-            gap: 15px;
+            gap: 18px;
         }
         
         .disease-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            transition: all 0.3s ease;
+            position: relative;
         }
         
         .disease-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.18);
         }
         
         .card-header {
-            padding: 15px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #eee;
+            padding: 18px;
+            background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
             cursor: pointer;
         }
         
         .disease-icon {
-            width: 40px;
-            height: 40px;
-            background: #1a6aa2;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #1a6aa2, #0d8b9f);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 15px;
+            margin-right: 18px;
             color: white;
+            flex-shrink: 0;
+            font-size: 1.4rem;
         }
         
         .disease-name {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             font-weight: bold;
             color: #1a6aa2;
+            flex: 1;
         }
         
         .card-content {
-            padding: 0 15px;
+            padding: 0 18px;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease;
+            transition: max-height 0.5s ease;
         }
         
         .card-content.expanded {
-            padding: 15px;
-            max-height: 1000px;
+            padding: 18px;
+            max-height: 2000px;
         }
         
         .disease-info {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            border-left: 3px solid #1a6aa2;
+            padding-left: 15px;
         }
         
         .info-title {
             font-weight: bold;
             color: #1a6aa2;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 1.1rem;
         }
         
         .treatment {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
+            background: linear-gradient(to bottom, #e3f2fd, #bbdefb);
+            padding: 18px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 1px solid #90caf9;
         }
         
         .treatment-title {
             font-weight: bold;
             color: #0d47a1;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 1.15rem;
         }
         
         .severity {
             display: inline-block;
-            padding: 3px 10px;
+            padding: 5px 15px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             margin-left: 10px;
+            font-weight: bold;
         }
         
         .low {
             background: #e8f5e9;
             color: #2e7d32;
+            border: 1px solid #a5d6a7;
         }
         
         .medium {
             background: #fff8e1;
             color: #f57f17;
+            border: 1px solid #ffd54f;
         }
         
         .high {
             background: #ffebee;
             color: #c62828;
+            border: 1px solid #ef9a9a;
         }
+        
+        .category-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .bacterial-tag { color: #d32f2f; border: 1px solid #d32f2f; }
+        .fungal-tag { color: #7b1fa2; border: 1px solid #7b1fa2; }
+        .parasitic-tag { color: #0288d1; border: 1px solid #0288d1; }
+        .environmental-tag { color: #388e3c; border: 1px solid #388e3c; }
+        .viral-tag { color: #f57c00; border: 1px solid #f57c00; }
         
         footer {
             text-align: center;
             color: white;
-            padding: 25px 0 15px;
-            font-size: 0.9rem;
-            opacity: 0.8;
+            padding: 30px 0 20px;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-top: 20px;
+        }
+        
+        .tip {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            color: white;
+            font-size: 0.95rem;
+        }
+        
+        .disease-count {
+            text-align: center;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .no-result {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
         }
         
         @media (min-width: 768px) {
             .container {
-                max-width: 500px;
+                max-width: 600px;
             }
         }
     </style>
@@ -240,9 +321,15 @@
             </div>
         </header>
         
+        <div class="disease-count">已收录 <strong>20</strong> 种金鱼常见疾病</div>
+        
+        <div class="tip">
+            <i class="fas fa-lightbulb"></i> 提示：点击疾病名称可查看详情，输入关键词可快速搜索
+        </div>
+        
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="search-input" placeholder="输入疾病名称或症状...">
+            <input type="text" id="search-input" placeholder="输入疾病名称或症状（如：白点、烂尾...）">
         </div>
         
         <div class="filters">
@@ -251,6 +338,7 @@
             <div class="filter-btn" data-filter="fungal">真菌性</div>
             <div class="filter-btn" data-filter="parasitic">寄生虫</div>
             <div class="filter-btn" data-filter="environmental">环境因素</div>
+            <div class="filter-btn" data-filter="viral">病毒性</div>
         </div>
         
         <div class="disease-list" id="disease-container">
@@ -258,12 +346,13 @@
         </div>
         
         <footer>
-            <p>© 2023 金鱼健康守护者 | 本信息仅供参考，具体治疗请咨询专业兽医</p>
+            <p><i class="fas fa-exclamation-triangle"></i> 重要提示：本信息仅供参考，具体治疗请咨询专业兽医</p>
+            <p>© 2023 金鱼健康守护者 | 知识更新日期: 2023年11月</p>
         </footer>
     </div>
     
     <script>
-        // 金鱼疾病数据
+        // 金鱼疾病数据（20种）
         const diseases = [
             {
                 id: 1,
@@ -344,6 +433,126 @@
                 severity: "low",
                 prevention: "避免强烈光照导致藻类过度光合作用，避免温差过大",
                 treatment: "换水改善水质；降低水温；减少光照；加入新水时缓慢注入"
+            },
+            {
+                id: 9,
+                name: "鱼痘病",
+                category: "viral",
+                symptoms: "体表出现蜡状白色或粉色增生，多出现在鳍部和头部",
+                cause: "病毒感染，水质不良时易发",
+                severity: "low",
+                prevention: "保持水质清洁，增强金鱼免疫力",
+                treatment: "改善水质；使用抗病毒药物；手术切除严重增生"
+            },
+            {
+                id: 10,
+                name: "鱼虱病",
+                category: "parasitic",
+                symptoms: "体表可见扁平圆形寄生虫，鱼体摩擦缸壁，鳞片脱落",
+                cause: "鱼虱寄生",
+                severity: "medium",
+                prevention: "新鱼检疫，定期消毒",
+                treatment: "手工移除寄生虫；使用敌百虫；0.5%盐水浴"
+            },
+            {
+                id: 11,
+                name: "头洞病",
+                category: "bacterial",
+                symptoms: "头部出现凹陷小洞，有时有白色分泌物",
+                cause: "六鞭毛虫感染或营养不良",
+                severity: "high",
+                prevention: "提供均衡营养，保持水质优良",
+                treatment: "甲硝唑药浴；补充维生素；改善水质"
+            },
+            {
+                id: 12,
+                name: "眼球突出",
+                category: "bacterial",
+                symptoms: "单眼或双眼突出，严重时眼球脱落",
+                cause: "细菌感染或水质问题",
+                severity: "high",
+                prevention: "保持水质清洁，避免外伤",
+                treatment: "抗生素治疗；改善水质；0.3%盐水浴"
+            },
+            {
+                id: 13,
+                name: "鱼鳔病",
+                category: "environmental",
+                symptoms: "游动失衡，无法控制沉浮，侧躺或倒立",
+                cause: "鱼鳔功能障碍，常因喂食不当或水温变化",
+                severity: "medium",
+                prevention: "避免过量喂食，保持水温稳定",
+                treatment: "停食数天；提高水温；喂食煮熟的豌豆"
+            },
+            {
+                id: 14,
+                name: "烂嘴病",
+                category: "bacterial",
+                symptoms: "口部出现白色溃疡，严重时口部组织坏死",
+                cause: "柱状细菌感染",
+                severity: "medium",
+                prevention: "保持水质清洁，避免鱼体受伤",
+                treatment: "隔离治疗；使用黄粉或抗生素；改善水质"
+            },
+            {
+                id: 15,
+                name: "竖鳞病",
+                category: "bacterial",
+                symptoms: "鳞片竖起，体表肿胀，常伴有腹水",
+                cause: "细菌感染引起的内脏问题",
+                severity: "high",
+                prevention: "保持水质稳定，避免温度骤变",
+                treatment: "抗生素治疗；改善水质；0.5%盐水浴"
+            },
+            {
+                id: 16,
+                name: "胡椒病",
+                category: "parasitic",
+                symptoms: "体表出现细小的金黄色或褐色斑点",
+                cause: "卵圆鞭毛虫寄生",
+                severity: "medium",
+                prevention: "保持水质清洁，避免温度骤变",
+                treatment: "升温至28-30℃；使用铜剂治疗；0.3%盐水浴"
+            },
+            {
+                id: 17,
+                name: "霓虹灯病",
+                category: "viral",
+                symptoms: "体侧肌肉出现白色或半透明区域，游动异常",
+                cause: "病毒感染",
+                severity: "high",
+                prevention: "新鱼隔离检疫，避免混养",
+                treatment: "无特效药，隔离病鱼；改善水质；增强免疫力"
+            },
+            {
+                id: 18,
+                name: "结核病",
+                category: "bacterial",
+                symptoms: "消瘦，脊柱弯曲，体表溃疡，内脏结节",
+                cause: "分枝杆菌感染",
+                severity: "high",
+                prevention: "保持水质清洁，避免过度拥挤",
+                treatment: "通常无法治愈，建议隔离或淘汰病鱼"
+            },
+            {
+                id: 19,
+                name: "棉口病",
+                category: "fungal",
+                symptoms: "口部出现棉絮状物质，食欲减退",
+                cause: "真菌感染",
+                severity: "medium",
+                prevention: "保持水质清洁，避免鱼体受伤",
+                treatment: "亚甲基蓝药浴；改善水质；0.3%盐水浴"
+            },
+            {
+                id: 20,
+                name: "浮头病（缺氧）",
+                category: "environmental",
+                symptoms: "鱼浮在水面呼吸，鳃盖开合快速",
+                cause: "水中溶氧不足",
+                severity: "high",
+                prevention: "保持适当养殖密度，使用增氧设备",
+                treatment: "立即增氧；换水；减少喂食；检查过滤系统"
             }
         ];
 
@@ -357,7 +566,8 @@
                 const searchTerm = this.value.toLowerCase();
                 const filteredDiseases = diseases.filter(disease => 
                     disease.name.toLowerCase().includes(searchTerm) || 
-                    disease.symptoms.toLowerCase().includes(searchTerm)
+                    disease.symptoms.toLowerCase().includes(searchTerm) ||
+                    disease.cause.toLowerCase().includes(searchTerm)
                 );
                 renderDiseases(filteredDiseases);
             });
@@ -391,11 +601,19 @@
             container.innerHTML = '';
             
             if (diseasesArray.length === 0) {
-                container.innerHTML = '<div class="no-result">没有找到匹配的疾病信息</div>';
+                container.innerHTML = '<div class="no-result"><i class="fas fa-search"></i> 没有找到匹配的疾病信息<br><span style="font-size:0.9rem;margin-top:10px;display:block;">请尝试其他关键词</span></div>';
                 return;
             }
             
             diseasesArray.forEach(disease => {
+                // 获取分类标签类
+                const tagClass = disease.category + '-tag';
+                const tagText = 
+                    disease.category === 'bacterial' ? '细菌性' :
+                    disease.category === 'fungal' ? '真菌性' :
+                    disease.category === 'parasitic' ? '寄生虫' :
+                    disease.category === 'environmental' ? '环境因素' : '病毒性';
+                
                 const card = document.createElement('div');
                 card.className = 'disease-card';
                 card.innerHTML = `
@@ -411,6 +629,7 @@
                             }</span>
                         </div>
                     </div>
+                    <div class="category-tag ${tagClass}">${tagText}</div>
                     <div class="card-content">
                         <div class="disease-info">
                             <div class="info-title"><i class="fas fa-diagnoses"></i> 症状</div>
@@ -437,6 +656,11 @@
                 
                 header.addEventListener('click', function() {
                     content.classList.toggle('expanded');
+                    
+                    // 滚动到疾病位置
+                    if (content.classList.contains('expanded')) {
+                        card.scrollIntoView({behavior: "smooth", block: "start"});
+                    }
                 });
                 
                 container.appendChild(card);
